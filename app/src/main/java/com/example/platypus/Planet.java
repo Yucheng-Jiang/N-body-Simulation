@@ -13,12 +13,13 @@ public class Planet {
     private double mass;
     private Position position;
     private Force netForce;
-    private Vector<Double> speed;
+    private Speed speed;
 
-    Planet(final double setMass, final Position setPosition) {
+    Planet(final double setMass, final Position setPosition, final Speed setSpeed) {
         this.mass = setMass;
         this.position = setPosition;
         this.netForce = calcNetForce();
+        this.speed = setSpeed;
         planets.add(this);
     }
 
@@ -34,7 +35,6 @@ public class Planet {
     public double getDistance(Planet planet) {
         return this.position.getDistance(planet.getPosition());
     }
-
 
     public Force calcNetForce() {
         if (planets == null || planets.size() == 0) {
@@ -53,7 +53,5 @@ public class Planet {
         }
 
         return netForce;
-
-
     }
 }
