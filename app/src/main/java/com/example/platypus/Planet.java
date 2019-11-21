@@ -9,13 +9,17 @@ import java.util.Vector;
 
 public class Planet {
     public static final double GRAVATATIONAL = 6.7 * Math.pow(10, -11);
+    public static List<Planet> planets = new ArrayList<>();
     private double mass;
-    private Vector<Double> position;
+    private Position position;
+    private Force netForce;
     private Vector<Double> speed;
 
-    Planet(final double setMass, final Vector<Double> setPosition) {
+    Planet(final double setMass, final Position setPosition) {
         this.mass = setMass;
         this.position = setPosition;
+        this.netForce = calcNetForce();
+        planets.add(this);
     }
 
 
@@ -23,19 +27,33 @@ public class Planet {
         return mass;
     }
 
-    public Vector<Double> getPosition() {
+    public Position getPosition() {
         return position;
     }
 
     public double getDistance(Planet planet) {
-        planet.getPosition().add(this.position);
+        return this.position.getDistance(planet.getPosition());
     }
 
 
-    public Vector calcNetForce(final List<Planet> a) {
-        List<Vector<Double>> force = new ArrayList<>();
-        for (int i = 0; i < a.size(); i++) {
-            a.get(i).getMass() * this.mass *
+    public Force calcNetForce() {
+        if (planets == null || planets.size() == 0) {
+            return new Force(0, 0);
         }
+
+        for (int i = 0; i < planets.size(); i++) {
+            Planet tempPlanet = planets.get(i);
+            double force = GRAVATATIONAL * this.mass * tempPlanet.getMass()
+                    / Math.pow(getDistance(tempPlanet), 2);
+            double angle = this.position.getAngle(tempPlanet.getPosition());
+            double xForce = Math.cos(angle) * force;
+            double yForce = Math.sin(angle) * force;
+
+            netForce.addForce(new Force(xForce, yForce));
+        }
+
+        return netForce;
+
+
     }
 }

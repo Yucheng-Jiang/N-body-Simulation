@@ -11,5 +11,7 @@ public class MainActivity extends AppCompatActivity {
         // project starts here
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        System.out.println(Math.pow(4,2));
     }
 }
