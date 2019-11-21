@@ -54,4 +54,12 @@ public class Planet {
 
         return netForce;
     }
+
+    public void updateLocation(final int time) {
+        double xAcceleration = netForce.getxForce() / this.mass;
+        double yAcceleratoin = netForce.getyForce() / this.mass;
+
+        position.setxCoordinate(this.position.getxCoordinate() + xAcceleration * time * time / 2);
+        position.setyCoordinate(this.position.getyCoordinate() + yAcceleratoin * time * time / 2);
+    }
 }
