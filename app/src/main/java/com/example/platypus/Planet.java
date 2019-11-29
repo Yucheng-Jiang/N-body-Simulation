@@ -8,7 +8,7 @@ import java.util.List;
 
 public class Planet {
     public static List<Planet> planetList = new ArrayList<>();
-    private static final double GRAVATATIONAL = 6.67 * Math.pow(10, -1);
+    private static final double GRAVATATIONAL = 6.67 * Math.pow(10, 1);
     private double mass;
     private Vector position;
     private Vector speed;

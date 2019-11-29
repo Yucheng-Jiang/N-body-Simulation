@@ -25,7 +25,6 @@ public class CustomView extends View {
                     (float) Math.pow(p.getMass() / 10, 1.5),
                     paint
             );
-            System.out.println("adwdwad");
         }
         invalidate();
     }
