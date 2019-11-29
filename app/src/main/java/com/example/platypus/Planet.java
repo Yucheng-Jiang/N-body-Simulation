@@ -5,22 +5,19 @@ import android.graphics.PointF;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 public class Planet {
-    public static final double GRAVATATIONAL = 6.7 * Math.pow(10, -11);
-    public static List<Planet> planets = new ArrayList<>();
+    public static List<Planet> planetList = new ArrayList<>();
+    private static final double GRAVATATIONAL = 6.67 * Math.pow(10, -1);
     private double mass;
-    private Position position;
-    private Force netForce;
-    private Speed speed;
+    private Vector position;
+    private Vector speed;
 
-    Planet(final double setMass, final Position setPosition, final Speed setSpeed) {
+    Planet(final double setMass, final Vector setPosition, final Vector setSpeed) {
         this.mass = setMass;
         this.position = setPosition;
-        this.netForce = calcNetForce();
         this.speed = setSpeed;
-        planets.add(this);
+        planetList.add(this);
     }
 
 
@@ -28,38 +25,43 @@ public class Planet {
         return mass;
     }
 
-    public Position getPosition() {
+    public Vector getPosition() {
         return position;
     }
 
-    public double getDistance(Planet planet) {
-        return this.position.getDistance(planet.getPosition());
-    }
-
-    public Force calcNetForce() {
-        if (planets == null || planets.size() == 0) {
-            return new Force(0, 0);
+    private Vector calcNetForce() {
+        Vector netForce = new Vector(0, 0);
+        for (int i = 0; i < planetList.size(); i++) {
+            Planet p = planetList.get(i);
+            if (p != this) {
+                double distance = p.position.distance(position);
+                double force = GRAVATATIONAL * mass * p.getMass()
+                        / Math.pow(distance, 2);
+                double cos = position.getX() / distance;
+                double sin = position.getY() / distance;
+                Vector forceVector = new Vector(force * cos, force * sin);
+                netForce.add(forceVector);
+            }
         }
-
-        for (int i = 0; i < planets.size(); i++) {
-            Planet tempPlanet = planets.get(i);
-            double force = GRAVATATIONAL * this.mass * tempPlanet.getMass()
-                    / Math.pow(getDistance(tempPlanet), 2);
-            double angle = this.position.getAngle(tempPlanet.getPosition());
-            double xForce = Math.cos(angle) * force;
-            double yForce = Math.sin(angle) * force;
-
-            netForce.addForce(new Force(xForce, yForce));
-        }
-
+        System.out.println(netForce.distance(new Vector(0, 0)));
         return netForce;
     }
 
-    public void updateLocation(final int time) {
-        double xAcceleration = netForce.getxForce() / this.mass;
-        double yAcceleratoin = netForce.getyForce() / this.mass;
+    public void update(final int time) {
+        Vector acceleration = new Vector(
+                calcNetForce().getX() / mass,
+                calcNetForce().getY() / mass
+        );
+        Vector speedToAdd = new Vector(
+                time * calcNetForce().getX() / mass,
+                time * calcNetForce().getY() / mass
+        );
 
-        position.setxCoordinate(this.position.getxCoordinate() + xAcceleration * time * time / 2);
-        position.setyCoordinate(this.position.getyCoordinate() + yAcceleratoin * time * time / 2);
+        Vector positionToAdd = new Vector(
+                speed.getX() * time + Math.pow(time, 2) * acceleration.getX() / 2,
+                speed.getY() * time + Math.pow(time, 2) * acceleration.getY() / 2
+        );
+        position.add(positionToAdd);
+        speed.add(speedToAdd);
     }
 }
