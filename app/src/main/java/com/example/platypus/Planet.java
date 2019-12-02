@@ -1,14 +1,21 @@
 package com.example.platypus;
 
 
+import android.app.AppComponentFactory;
 import android.graphics.PointF;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.Spinner;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Planet {
+
     public static List<Planet> planetList = new ArrayList<>();
-    private static final double GRAVATATIONAL = 6.67 * Math.pow(10, 1);
+    private static final double GRAVATATIONAL = 6.67 * Math.pow(10, 0);
     private double mass;
     private Vector position;
     private Vector speed;
@@ -37,17 +44,20 @@ public class Planet {
                 double distance = p.position.distance(position);
                 double force = GRAVATATIONAL * mass * p.getMass()
                         / Math.pow(distance, 2);
-                double cos = position.getX() / distance;
-                double sin = position.getY() / distance;
+                double cos = (p.getPosition().getX() - position.getX()) / distance;
+                double sin = (p.getPosition().getY() - position.getY()) / distance;
                 Vector forceVector = new Vector(force * cos, force * sin);
                 netForce.add(forceVector);
             }
         }
-        System.out.println(netForce.distance(new Vector(0, 0)));
         return netForce;
     }
 
-    public void update(final int time) {
+    public boolean update(final double time) {
+        if (isCrashed()) {
+            return false;
+        }
+
         Vector acceleration = new Vector(
                 calcNetForce().getX() / mass,
                 calcNetForce().getY() / mass
@@ -63,5 +73,21 @@ public class Planet {
         );
         position.add(positionToAdd);
         speed.add(speedToAdd);
+
+        return true;
+    }
+    private boolean isCrashed() {
+        for (Planet p : planetList) {
+            if (p.equals(this)) {
+                continue;
+            } else {
+                if (this.getPosition().distance(p.getPosition()) <= Math.pow(this.mass, 0.5) + Math.pow(p.mass, 0.5)) {
+                    planetList.remove(p);
+                    planetList.remove(this);
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

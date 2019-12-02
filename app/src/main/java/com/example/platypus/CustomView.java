@@ -22,7 +22,7 @@ public class CustomView extends View {
             canvas.drawCircle(
                     (float) p.getPosition().getX(),
                     (float) p.getPosition().getY(),
-                    (float) Math.pow(p.getMass() / 10, 1.5),
+                    (float) Math.pow(p.getMass(), 0.5),
                     paint
             );
         }
