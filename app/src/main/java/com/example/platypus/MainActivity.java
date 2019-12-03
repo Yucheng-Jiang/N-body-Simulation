@@ -54,15 +54,6 @@ public class MainActivity extends AppCompatActivity {
                 updateSpinner();
             }
         };
-        /*
-        customView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return false;
-            }
-            public
-        });
-        */
 
         Button startButton = findViewById(R.id.startButton);
         startButton.setOnClickListener(new View.OnClickListener() {
@@ -124,6 +115,8 @@ public class MainActivity extends AppCompatActivity {
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, list);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(dataAdapter);
+
+
     }
 
 }

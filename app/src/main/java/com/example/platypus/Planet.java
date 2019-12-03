@@ -1,16 +1,12 @@
 package com.example.platypus;
 
 
-import android.app.AppComponentFactory;
-import android.graphics.PointF;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.Spinner;
+
+import android.graphics.Color;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Planet {
 
@@ -19,12 +15,17 @@ public class Planet {
     private double mass;
     private Vector position;
     private Vector speed;
+    private int color;
+
 
     Planet(final double setMass, final Vector setPosition, final Vector setSpeed) {
         this.mass = setMass;
         this.position = setPosition;
         this.speed = setSpeed;
         planetList.add(this);
+        Random rand = new Random();
+        this.color = Color.rgb(rand.nextFloat() + 0.1f, rand.nextFloat() + 0.1f, rand.nextFloat() + 0.1f);
+
     }
 
 
@@ -76,6 +77,7 @@ public class Planet {
 
         return true;
     }
+
     private boolean isCrashed() {
         for (Planet p : planetList) {
             if (p.equals(this)) {
@@ -90,4 +92,9 @@ public class Planet {
         }
         return false;
     }
+
+    public int getColor() {
+        return this.color;
+    }
+
 }

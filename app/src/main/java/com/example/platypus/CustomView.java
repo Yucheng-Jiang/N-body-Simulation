@@ -5,10 +5,8 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
 import android.view.View;
+import java.util.Random;
 
 import androidx.annotation.Nullable;
 
@@ -39,7 +37,10 @@ public class CustomView extends View {
         for (int i = 0; i < Planet.planetList.size(); i++) {
             Planet p = Planet.planetList.get(i);
             Paint paint = new Paint();
-            paint.setColor(Color.RED);
+            Random rand = new Random();
+            paint.setColor(p.getColor());
+
+
             canvas.drawCircle(
                     (float) p.getPosition().getX(),
                     (float) p.getPosition().getY(),
