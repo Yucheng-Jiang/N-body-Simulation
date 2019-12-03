@@ -13,8 +13,7 @@ import android.view.View;
 import androidx.annotation.Nullable;
 
 public class CustomView extends View {
-    private float scaleX = 1;
-    private float scaleY = 1;
+    private float scale = 1;
 
     public CustomView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -35,7 +34,7 @@ public class CustomView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        canvas.scale(scaleX, scaleY);
+        canvas.scale(scale, scale);
         for (int i = 0; i < Planet.planetList.size(); i++) {
             Planet p = Planet.planetList.get(i);
             Paint paint = new Paint();
@@ -47,12 +46,10 @@ public class CustomView extends View {
                     paint
             );
         }
-        System.out.println(scaleX);
         invalidate();
     }
 
     public void setScale(float x) {
-        scaleX = x;
-        scaleY = x;
+        scale = x;
     }
 }
