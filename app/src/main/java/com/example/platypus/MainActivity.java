@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -26,26 +27,43 @@ public class MainActivity extends AppCompatActivity {
     private Timer timer;
     private boolean isRunning = false;
     private Spinner spinner;
+    private Handler handler = new Handler();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // project starts here
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //test add planets
         Planet.planetList.clear();
         new Planet(200, new Vector(300,600), new Vector(0, 0));
         new Planet(50, new Vector(400,400), new Vector(2, 2));
         new Planet(100, new Vector(600,600), new Vector(1, 1));
-
-        /*
-        Button addPlanet = findViewById(R.id.addPlanet);
-        addPlanet.setOnClickListener(new View.OnClickListener() {
+        //
+        CustomView customView = findViewById(R.id.customView);
+        Button testButton = findViewById(R.id.testButton);
+        testButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                customView.setScale(0.8f);
             }
         });
 
-         */
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                updateSpinner();
+            }
+        };
+        /*
+        customView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return false;
+            }
+            public
+        });
+        */
+
         Button startButton = findViewById(R.id.startButton);
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,8 +77,9 @@ public class MainActivity extends AppCompatActivity {
                         public void run() {
                             for (Planet p : Planet.planetList) {
                                 if (!p.update(0.1)) {
+                                    handler.post(runnable);
                                     return;
-                                };
+                                }
                             }
                         }
 
@@ -75,15 +94,18 @@ public class MainActivity extends AppCompatActivity {
         });
 
         spinner = findViewById(R.id.spinner);
+        updateSpinner();
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 //TextView textViewMass = findViewById(R.id.mass);
                 //textViewMass.setText(Planet.planetList.get(position).getMass());
+                if (position == Planet.planetList.size()) {
+                    new Planet(50, new Vector(0,0), new Vector(0, 0));
+                    handler.post(runnable);
+                }
                 EditText mass = findViewById(R.id.mass);
                 mass.setHint("Mass: " + Planet.planetList.get(position).getMass());
-
-                System.out.println("***** change mass to" + mass.getText());
             }
 
             @Override
@@ -91,8 +113,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        updateSpinner();
-
     }
 
     public void updateSpinner() {

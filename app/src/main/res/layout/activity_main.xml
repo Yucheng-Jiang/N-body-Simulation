@@ -20,6 +20,7 @@
         app:layout_constraintVertical_bias="0.134" />
 
     <com.example.platypus.CustomView
+        android:id="@+id/customView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
@@ -46,7 +47,7 @@
 
         <EditText
             android:id="@+id/mass"
-            android:layout_width="100dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:autofillHints="mass"
             android:ems="10"
@@ -56,11 +57,11 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/addPlanet"
+        android:id="@+id/testButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="addPlanet"
-        tools:layout_editor_absoluteX="311dp"
-        tools:layout_editor_absoluteY="449dp" />
+        android:text="testButton"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="16dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
