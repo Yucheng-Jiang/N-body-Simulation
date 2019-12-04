@@ -43,7 +43,6 @@ public class CustomView extends View {
             Paint paint = new Paint();
             paint.setColor(p.getColor());
 
-            canvas.drawPath(p.path, paint);
             canvas.drawCircle(
                     (float) p.getPosition().getX(),
                     (float) p.getPosition().getY(),
@@ -65,7 +64,7 @@ public class CustomView extends View {
                 Vector currentTouch = new Vector(event.getX(), event.getY());
                 currentTouch.minus(mPreviousTouch);
                 position.add(currentTouch.getX(), currentTouch.getY());
-                Toast.makeText(getContext(), "move", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getContext(), "move", Toast.LENGTH_SHORT).show();
                 break;
         }
         mPreviousTouch.set(event.getX(), event.getY());
