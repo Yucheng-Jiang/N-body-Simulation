@@ -3,6 +3,7 @@ package com.example.platypus;
 
 
 import android.graphics.Color;
+import android.graphics.Path;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,7 @@ public class Planet {
     private Vector position;
     private Vector speed;
     private int color;
+    public Path path = new Path();
 
 
     Planet(final double setMass, final Vector setPosition, final Vector setSpeed) {
@@ -25,7 +27,7 @@ public class Planet {
         planetList.add(this);
         Random rand = new Random();
         this.color = Color.rgb(rand.nextFloat() + 0.1f, rand.nextFloat() + 0.1f, rand.nextFloat() + 0.1f);
-
+        path.moveTo((float) position.getX(), (float) position.getY());
     }
 
 
@@ -74,7 +76,7 @@ public class Planet {
         );
         position.add(positionToAdd);
         speed.add(speedToAdd);
-
+        path.lineTo((float) position.getX(), (float) position.getY());
         return true;
     }
 
