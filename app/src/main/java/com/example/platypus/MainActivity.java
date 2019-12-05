@@ -63,10 +63,11 @@ public class MainActivity extends AppCompatActivity {
         edit = findViewById(R.id.Edit);
 
         Planet.planetList.clear();
-        new Planet(3000, new Vector(0,0), new Vector(0, 0));
-        new Planet(50, new Vector(300,300), new Vector(-3.5, 3));
-        new Planet(50, new Vector(800, 800), new Vector(-2.5, 1.5));
-        //
+        //new Planet(3000, new Vector(0,0), new Vector(0, 0));
+        //new Planet(50, new Vector(300,300), new Vector(-3.5, 3));
+        //new Planet(50, new Vector(800, 800), new Vector(-2.5, 1.5));
+
+        new SpecialPlanet(100, new Vector(0,0), new Vector(0, 0));
         CustomView customView = findViewById(R.id.customView);
         Button testButton = findViewById(R.id.testButton);
         testButton.setOnClickListener(new View.OnClickListener() {

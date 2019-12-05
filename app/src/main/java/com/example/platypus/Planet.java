@@ -15,11 +15,11 @@ import java.util.Random;
 public class Planet {
 
     public static List<Planet> planetList = new ArrayList<>();
-    private static final double GRAVATATIONAL = 6.67 * Math.pow(10, 0);
-    private double mass;
-    private Vector position;
-    private Vector speed;
-    private int color;
+    protected static final double GRAVATATIONAL = 6.67 * Math.pow(10, 0);
+    protected double mass;
+    protected Vector position;
+    protected Vector speed;
+    protected int color;
     public Path path = new Path();
 
     Planet(final double setMass, final Vector setPosition, final Vector setSpeed) {
@@ -30,7 +30,6 @@ public class Planet {
         Random rand = new Random();
         this.color = Color.rgb(rand.nextFloat() + 0.1f, rand.nextFloat() + 0.1f, rand.nextFloat() + 0.1f);
         path.moveTo((float) position.getX(), (float) position.getY());
-
     }
 
 
@@ -83,7 +82,7 @@ public class Planet {
         return true;
     }
 
-    private boolean isCrashed() {
+    protected boolean isCrashed() {
         for (Planet p : planetList) {
             if (p.equals(this)) {
                 continue;
