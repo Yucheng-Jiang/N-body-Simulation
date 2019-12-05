@@ -99,8 +99,9 @@ public class MainActivity extends AppCompatActivity {
                             }
                             updateData(currentPlanet);
 
-                            if (Planet.planetList.size() <= 1) {
-                                delete.setVisibility(View.GONE);
+                            if (Planet.planetList.size() == 0) {
+                                new Planet(50, new Vector(0, 0), new Vector(0,0));
+                                Toast.makeText(getApplicationContext(), "Default Planet Created", Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
@@ -127,6 +128,10 @@ public class MainActivity extends AppCompatActivity {
                         public void run() {
                             for (Planet p : Planet.planetList) {
                                 if (!p.update(0.1)) {
+                                    if (Planet.planetList.size() == 0) {
+                                        new Planet(50, new Vector(0, 0), new Vector(0,0));
+                                        Toast.makeText(getApplicationContext(), "Default Planet Created", Toast.LENGTH_SHORT).show();
+                                    }
                                     handler.post(runnable);
                                     return;
                                 }
@@ -146,15 +151,14 @@ public class MainActivity extends AppCompatActivity {
 
         spinner = findViewById(R.id.spinner);
         updateSpinner();
+
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 //TextView textViewMass = findViewById(R.id.mass);
                 //textViewMass.setText(Planet.planetList.get(position).getMass());
                 if (parent.getItemAtPosition(position).equals("Add Planet")) {
-                    System.out.println("=======================" + Planet.planetList.size());
                     editInfo(true);
-                    System.out.println("****************" + Planet.planetList.size());
                     handler.post(runnable);
                 } else {
                     currentPlanet = Planet.planetList.get(position);
