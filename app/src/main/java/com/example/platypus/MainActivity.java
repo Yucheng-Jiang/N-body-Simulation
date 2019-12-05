@@ -8,6 +8,8 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -44,12 +46,15 @@ public class MainActivity extends AppCompatActivity {
     private Planet currentPlanet = null;
     private Button delete;
     private Button edit;
+    private Vibrator vibrator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         // project starts here
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
         //test add planets
         massText = findViewById(R.id.MassText);
         speedText = findViewById(R.id.SpeedText);
@@ -128,6 +133,7 @@ public class MainActivity extends AppCompatActivity {
                         public void run() {
                             for (Planet p : Planet.planetList) {
                                 if (!p.update(0.1)) {
+                                    vibrator.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE));
                                     if (Planet.planetList.size() == 0) {
                                         new Planet(50, new Vector(0, 0), new Vector(0,0));
                                         Toast.makeText(getApplicationContext(), "Default Planet Created", Toast.LENGTH_SHORT).show();

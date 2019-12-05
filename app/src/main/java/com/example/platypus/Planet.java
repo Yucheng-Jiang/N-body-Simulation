@@ -5,9 +5,11 @@ package com.example.platypus;
 import android.graphics.Color;
 import android.graphics.Path;
 
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
 
 public class Planet {
 
@@ -19,7 +21,6 @@ public class Planet {
     private int color;
     public Path path = new Path();
 
-
     Planet(final double setMass, final Vector setPosition, final Vector setSpeed) {
         this.mass = setMass;
         this.position = setPosition;
@@ -28,6 +29,7 @@ public class Planet {
         Random rand = new Random();
         this.color = Color.rgb(rand.nextFloat() + 0.1f, rand.nextFloat() + 0.1f, rand.nextFloat() + 0.1f);
         path.moveTo((float) position.getX(), (float) position.getY());
+
     }
 
 
