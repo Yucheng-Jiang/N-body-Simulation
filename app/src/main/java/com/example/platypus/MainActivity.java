@@ -136,7 +136,13 @@ public class MainActivity extends AppCompatActivity {
                                     vibrator.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE));
                                     if (Planet.planetList.size() == 0) {
                                         new Planet(50, new Vector(0, 0), new Vector(0,0));
-                                        Toast.makeText(getApplicationContext(), "Default Planet Created", Toast.LENGTH_SHORT).show();
+                                        runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                Toast.makeText(getApplicationContext(), "Default Planet Created", Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+
                                     }
                                     handler.post(runnable);
                                     return;
