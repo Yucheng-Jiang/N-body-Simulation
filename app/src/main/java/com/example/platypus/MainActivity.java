@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
                 //TextView textViewMass = findViewById(R.id.mass);
                 //textViewMass.setText(Planet.planetList.get(position).getMass());
                 if (parent.getItemAtPosition(position).equals("Add Planet")) {
-                    //new Planet(50, new Vector(0,0), new Vector(0, 0));
+                    System.out.println("=======================" + Planet.planetList.size());
                     editInfo(true);
                     System.out.println("****************" + Planet.planetList.size());
                     handler.post(runnable);
@@ -178,14 +178,12 @@ public class MainActivity extends AppCompatActivity {
             list.add("Planet " + String.valueOf(i + 1));
         }
 
-
         list.add("Add Planet");
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, list);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(dataAdapter);
-
-
     }
+
     public void updateData(Planet planet) {
         if (planet == null) {
             massText.setText("Mass");
@@ -242,61 +240,46 @@ public class MainActivity extends AppCompatActivity {
                 String xStr = setX.getText().toString().trim();
                 String yStr = setY.getText().toString().trim();
                 String speedStr = setSpeedValue.getText().toString().trim();
-
-
-
-
+                //
                 if (isNew) {
                     if (mass.length() == 0) {
                         mass = "100";
                     }
-
                     if (speedStr.length() == 0) {
                         speedStr = "1";
                     }
-
                     if (directionStr.length() == 0) {
                         directionStr = "0";
                     }
-
                     if (xStr.length() == 0) {
                         xStr = "200";
                     }
-
                     if (yStr.length() == 0) {
                         yStr = "200";
                     }
-
                     double direction = (Integer.parseInt(directionStr) % 360) / (2 * Math.PI);
                     int x = Integer.parseInt(xStr);
                     int y = Integer.parseInt(yStr);
                     double speed = Integer.parseInt(speedStr);
-
-                    Planet planet = new Planet(
-                            Integer.parseInt(mass),
+                    new Planet(Integer.parseInt(mass),
                             new Vector(x, y),
                             new Vector(speed * Math.cos(direction), speed * Math.sin(direction)));
-                    Planet.planetList.add(planet);
-
                 } else {
                     if (mass.length() != 0) {
                         currentPlanet.setMass(Integer.parseInt(mass));
                     }
-
                     if (xStr.length() != 0) {
                         currentPlanet.setPosition( new Vector(
                         Integer.parseInt(xStr),
                         currentPlanet.getPosition().getY()
                         ));
                     }
-
                     if (yStr.length() != 0) {
                         currentPlanet.setPosition( new Vector(
                                 currentPlanet.getPosition().getX(),
                                 Integer.parseInt(yStr)
                         ));
                     }
-
                     if (directionStr.length() != 0 && speedStr.length() != 0) {
                         double direction = (Integer.parseInt(directionStr) % 360) / (2 * Math.PI);
                         double speed = Integer.parseInt(speedStr);
@@ -304,42 +287,23 @@ public class MainActivity extends AppCompatActivity {
                                 speed * Math.cos(direction),
                                 speed * Math.sin(direction)));
                     }
-
-
-
-
                 }
-
+                Runnable runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        updateSpinner();
+                    }
+                };
+                handler.post(runnable);
             }
         });
-
         dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
             }
         });
-
         AlertDialog alertDialog = dialogBuilder.create();
         alertDialog.show();
-
-        /*
-        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                // if EditText is empty disable closing on possitive button
-
-
-
-                boolean wantToCloseDialog = (setMass.getText().toString().trim().isEmpty());
-
-                if (!wantToCloseDialog) {
-                    alertDialog.dismiss();
-                }
-
-            }
-        });
-
-         */
+        //
     }
 
 }
