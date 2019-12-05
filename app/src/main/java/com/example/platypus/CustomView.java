@@ -72,13 +72,6 @@ public class CustomView extends View {
         mPosY = y;
     }
 
-    public float getmPosX() {
-        return mPosX;
-    }
-
-    public float getmPosY() {
-        return mPosY;
-    }
 
     private class SimpleScaleListenerImpl extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override

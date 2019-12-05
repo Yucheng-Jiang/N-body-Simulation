@@ -154,8 +154,8 @@ public class MainActivity extends AppCompatActivity {
                 if (parent.getItemAtPosition(position).equals("Add Planet")) {
                     //new Planet(50, new Vector(0,0), new Vector(0, 0));
                     editInfo(true);
+                    System.out.println("****************" + Planet.planetList.size());
                     handler.post(runnable);
-                } else if (parent.getItemAtPosition(position).equals("Test")) {
                 } else {
                     currentPlanet = Planet.planetList.get(position);
                     float x = customView.getWidth() / 2 - (float) currentPlanet.getPosition().getX();
@@ -187,7 +187,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
     public void updateData(Planet planet) {
-        System.out.println("*************************");
         if (planet == null) {
             massText.setText("Mass");
             positionText.setText("Position");
@@ -278,7 +277,6 @@ public class MainActivity extends AppCompatActivity {
                             new Vector(x, y),
                             new Vector(speed * Math.cos(direction), speed * Math.sin(direction)));
                     Planet.planetList.add(planet);
-                    System.out.println("*********************" + Planet.planetList.size());
 
                 } else {
                     if (mass.length() != 0) {
