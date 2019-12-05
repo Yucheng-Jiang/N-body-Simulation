@@ -67,8 +67,7 @@ public class MainActivity extends AppCompatActivity {
         testButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                customView.setScale(0.8f);
-                customView.setPosition(100, 100);
+                customView.setmPosXY(100, 100);
             }
         });
 
@@ -159,6 +158,9 @@ public class MainActivity extends AppCompatActivity {
                 } else if (parent.getItemAtPosition(position).equals("Test")) {
                 } else {
                     currentPlanet = Planet.planetList.get(position);
+                    float x = customView.getWidth() / 2 - (float) currentPlanet.getPosition().getX();
+                    float y = customView.getHeight() / 2 - (float) currentPlanet.getPosition().getY();
+                    customView.setmPosXY(x, y);
                 }
 
             }
