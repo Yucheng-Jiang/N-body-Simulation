@@ -58,8 +58,7 @@ public class MainActivity extends AppCompatActivity {
         testButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                customView.setScale(0.8f);
-                customView.setPosition(100, 100);
+                customView.setmPosXY(100, 100);
             }
         });
 
@@ -127,13 +126,14 @@ public class MainActivity extends AppCompatActivity {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                //TextView textViewMass = findViewById(R.id.mass);
-                //textViewMass.setText(Planet.planetList.get(position).getMass());
                 if (position == Planet.planetList.size()) {
-                    //new Planet(50, new Vector(0,0), new Vector(0, 0));
+
                     handler.post(runnable);
                 } else {
                     currentPlanet = Planet.planetList.get(position);
+                    float x = customView.getWidth() / 2 - (float) currentPlanet.getPosition().getX();
+                    float y = customView.getHeight() / 2 - (float) currentPlanet.getPosition().getY();
+                    customView.setmPosXY(x, y);
                 }
 
             }
