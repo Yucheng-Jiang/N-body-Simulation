@@ -63,11 +63,11 @@ public class MainActivity extends AppCompatActivity {
         edit = findViewById(R.id.Edit);
 
         Planet.planetList.clear();
-        //new Planet(3000, new Vector(0,0), new Vector(0, 0));
-        //new Planet(50, new Vector(300,300), new Vector(-3.5, 3));
-        //new Planet(50, new Vector(800, 800), new Vector(-2.5, 1.5));
+        new Planet(3000, new Vector(0,0), new Vector(0, 0));
+        new Planet(50, new Vector(300,300), new Vector(-3.5, 3));
+        new Planet(50, new Vector(800, 800), new Vector(-2.5, 1.5));
 
-        new SpecialPlanet(100, new Vector(0,0), new Vector(0, 0));
+
         CustomView customView = findViewById(R.id.customView);
         Button testButton = findViewById(R.id.testButton);
         testButton.setOnClickListener(new View.OnClickListener() {
@@ -89,9 +89,12 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 updateData(currentPlanet);
                 if (currentPlanet == null) {
+                    /*
                     delete.setVisibility(View.GONE);
                     edit.setVisibility(View.GONE);
                     return;
+
+                     */
                 } else {
                     if (Planet.planetList.size() > 1) {
                         delete.setVisibility(View.VISIBLE);
@@ -99,10 +102,13 @@ public class MainActivity extends AppCompatActivity {
                             Planet.planetList.remove(currentPlanet);
                             handler.post(runnable);
 
+                            /*
                             if (Planet.planetList.size() == 0) {
                                 delete.setVisibility(View.GONE);
                                 currentPlanet = null;
                             }
+
+                             */
                             updateData(currentPlanet);
 
                             if (Planet.planetList.size() == 0) {
@@ -174,6 +180,10 @@ public class MainActivity extends AppCompatActivity {
                 if (parent.getItemAtPosition(position).equals("Add Planet")) {
                     editInfo(true);
                     handler.post(runnable);
+                } else if (parent.getItemAtPosition(position).equals("Special Planet"))  {
+                    Planet.planetList.clear();
+                    new SpecialPlanet(100, new Vector(0,0), new Vector(0, 0));
+                    handler.post(runnable);
                 } else {
                     currentPlanet = Planet.planetList.get(position);
                     float x = customView.getWidth() / 2 - (float) currentPlanet.getPosition().getX();
@@ -197,6 +207,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         list.add("Add Planet");
+        list.add("Special Planet");
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, list);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(dataAdapter);

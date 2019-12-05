@@ -8,7 +8,6 @@ public class SpecialPlanet extends Planet {
     private double t = 0.13;
     SpecialPlanet(final double setMass, final Vector setPosition, final Vector setSpeed) {
         super(setMass, setPosition, setSpeed);
-        planetList.add(this);
         Random rand = new Random();
         this.color = Color.rgb(rand.nextFloat() + 0.1f, rand.nextFloat() + 0.1f, rand.nextFloat() + 0.1f);
         path.moveTo((float) position.getX(), (float) position.getY());
