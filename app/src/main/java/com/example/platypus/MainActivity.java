@@ -63,9 +63,9 @@ public class MainActivity extends AppCompatActivity {
         edit = findViewById(R.id.Edit);
 
         Planet.planetList.clear();
-        new Planet(200, new Vector(300,600), new Vector(0, 0));
-        new Planet(50, new Vector(400,400), new Vector(2, 2));
-        new Planet(100, new Vector(600,600), new Vector(1, 1));
+        new Planet(3000, new Vector(0,0), new Vector(0, 0));
+        new Planet(50, new Vector(300,300), new Vector(-3.5, 3));
+        new Planet(50, new Vector(800, 800), new Vector(-2.5, 1.5));
         //
         CustomView customView = findViewById(R.id.customView);
         Button testButton = findViewById(R.id.testButton);
@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (isRunning == false) {
-                    startButton.setText("Click To Stop");
+                    startButton.setText("Stop");
                     isRunning = true;
                     timer = new Timer();
                     timer.schedule(new TimerTask() {
@@ -153,10 +153,11 @@ public class MainActivity extends AppCompatActivity {
 
                     }, 0, 1);
                 } else {
-                    startButton.setText("Click To Start");
+                    startButton.setText("Start");
                     isRunning = false;
                     timer.cancel();
                     timer.purge();
+
                 }
             }
         });
@@ -211,7 +212,7 @@ public class MainActivity extends AppCompatActivity {
         positionText.setText("Position: x = " + round(planet.getPosition().getX())
                 + " y = " + round(planet.getPosition().getY()));
         speedText.setText("Velocity: x = " + round(planet.getSpeed().getX())
-                + " y = " + round(planet.getPosition().getY()));
+                + " y = " + round(planet.getSpeed().getY()));
     }
     public static String round(double value) {
         DecimalFormat decimalFormat = new DecimalFormat("0.00");
