@@ -3,16 +3,23 @@ package com.example.platypus;
 import androidx.appcompat.app.AppCompatActivity;
 
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import java.math.BigDecimal;
@@ -36,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView positionText;
     private Planet currentPlanet = null;
     private Button delete;
+    private Button edit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
         speedText = findViewById(R.id.SpeedText);
         positionText = findViewById(R.id.PositionText);
         delete = findViewById(R.id.Delete);
+        edit = findViewById(R.id.Edit);
 
         Planet.planetList.clear();
         new Planet(200, new Vector(300,600), new Vector(0, 0));
@@ -73,20 +82,34 @@ public class MainActivity extends AppCompatActivity {
         Runnable runnable1 = new Runnable() {
             @Override
             public void run() {
+                updateData(currentPlanet);
                 if (currentPlanet == null) {
                     delete.setVisibility(View.GONE);
+                    edit.setVisibility(View.GONE);
                     return;
                 } else {
-                    delete.setVisibility(View.VISIBLE);
-                    delete.setOnClickListener(unused -> {
-                        Planet.planetList.remove(currentPlanet);
-                        handler.post(runnable);
+                    if (Planet.planetList.size() > 1) {
+                        delete.setVisibility(View.VISIBLE);
+                        delete.setOnClickListener(unused -> {
+                            Planet.planetList.remove(currentPlanet);
+                            handler.post(runnable);
 
-                        if (Planet.planetList.size() == 0) {
-                            delete.setVisibility(View.GONE);
-                            currentPlanet = null;
-                        }
-                        updateData(currentPlanet);
+                            if (Planet.planetList.size() == 0) {
+                                delete.setVisibility(View.GONE);
+                                currentPlanet = null;
+                            }
+                            updateData(currentPlanet);
+
+                            if (Planet.planetList.size() <= 1) {
+                                delete.setVisibility(View.GONE);
+                            }
+                        });
+                    }
+
+                    edit.setVisibility(View.VISIBLE);
+                    edit.setOnClickListener(unused -> {
+                        editInfo(false);
+                        handler.post(runnable);
                     });
                 }
             }
@@ -129,9 +152,11 @@ public class MainActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 //TextView textViewMass = findViewById(R.id.mass);
                 //textViewMass.setText(Planet.planetList.get(position).getMass());
-                if (position == Planet.planetList.size()) {
+                if (parent.getItemAtPosition(position).equals("Add Planet")) {
                     //new Planet(50, new Vector(0,0), new Vector(0, 0));
+                    editInfo(true);
                     handler.post(runnable);
+                } else if (parent.getItemAtPosition(position).equals("Test")) {
                 } else {
                     currentPlanet = Planet.planetList.get(position);
                 }
@@ -150,6 +175,8 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i < Planet.planetList.size(); i++) {
             list.add("Planet " + String.valueOf(i + 1));
         }
+
+
         list.add("Add Planet");
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, list);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -158,6 +185,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
     public void updateData(Planet planet) {
+        System.out.println("*************************");
         if (planet == null) {
             massText.setText("Mass");
             positionText.setText("Position");
@@ -173,6 +201,145 @@ public class MainActivity extends AppCompatActivity {
     public static String round(double value) {
         DecimalFormat decimalFormat = new DecimalFormat("0.00");
         return decimalFormat.format(value);
+    }
+    public void editInfo(boolean isNew) {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        dialogBuilder.setCancelable(false);
+        LayoutInflater inflater = this.getLayoutInflater();
+        final View dialogView = inflater.inflate(R.layout.chunk_setinfo, null);
+        dialogBuilder.setView(dialogView);
+
+        dialogBuilder.setTitle("PLANET BUILDER");
+        //dialogBuilder.setMessage("Enter data below");
+
+        final EditText setMass = (EditText) dialogView.findViewById(R.id.SetMass);
+        final EditText setSpeedValue = (EditText) dialogView.findViewById(R.id.SetSpeedValue);
+        final EditText setSpeedDirection = (EditText) dialogView.findViewById(R.id.SetSpeedDirection);
+        final EditText setX = (EditText) dialogView.findViewById(R.id.SetX);
+        final EditText setY = (EditText) dialogView.findViewById(R.id.SetY);
+
+        if (isNew) {
+            setMass.setHint("Enter mass (Default 100)");
+            setSpeedValue.setHint("Set speed value (Default 1)");
+            setSpeedDirection.setHint("Set direction in degrees (Default 0)");
+            setX.setHint("Set X coordinate (Default 200)");
+            setY.setHint("Set Y coordinate (Default 200");
+        } else {
+            setMass.setHint("Current mass: " + currentPlanet.getMass());
+            setSpeedValue.setHint("Current speed: " + round(currentPlanet.getSpeed().getModulus()));
+            setSpeedDirection.setHint("Current moving direction: " + round(currentPlanet.getSpeed().getAngle()));
+            setX.setHint("Current x-coordinate: " + round(currentPlanet.getPosition().getX()));
+            setY.setHint("Current x-coordinate: " + round(currentPlanet.getPosition().getY()));
+        }
+
+
+        dialogBuilder.setPositiveButton("Done", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                //do something with edt.getText().toString();
+                String mass = setMass.getText().toString().trim();
+                String directionStr = setSpeedDirection.getText().toString().trim();
+                String xStr = setX.getText().toString().trim();
+                String yStr = setY.getText().toString().trim();
+                String speedStr = setSpeedValue.getText().toString().trim();
+
+
+
+
+                if (isNew) {
+                    if (mass.length() == 0) {
+                        mass = "100";
+                    }
+
+                    if (speedStr.length() == 0) {
+                        speedStr = "1";
+                    }
+
+                    if (directionStr.length() == 0) {
+                        directionStr = "0";
+                    }
+
+                    if (xStr.length() == 0) {
+                        xStr = "200";
+                    }
+
+                    if (yStr.length() == 0) {
+                        yStr = "200";
+                    }
+
+                    double direction = (Integer.parseInt(directionStr) % 360) / (2 * Math.PI);
+                    int x = Integer.parseInt(xStr);
+                    int y = Integer.parseInt(yStr);
+                    double speed = Integer.parseInt(speedStr);
+
+                    Planet planet = new Planet(
+                            Integer.parseInt(mass),
+                            new Vector(x, y),
+                            new Vector(speed * Math.cos(direction), speed * Math.sin(direction)));
+                    Planet.planetList.add(planet);
+                    System.out.println("*********************" + Planet.planetList.size());
+
+                } else {
+                    if (mass.length() != 0) {
+                        currentPlanet.setMass(Integer.parseInt(mass));
+                    }
+
+                    if (xStr.length() != 0) {
+                        currentPlanet.setPosition( new Vector(
+                        Integer.parseInt(xStr),
+                        currentPlanet.getPosition().getY()
+                        ));
+                    }
+
+                    if (yStr.length() != 0) {
+                        currentPlanet.setPosition( new Vector(
+                                currentPlanet.getPosition().getX(),
+                                Integer.parseInt(yStr)
+                        ));
+                    }
+
+                    if (directionStr.length() != 0 && speedStr.length() != 0) {
+                        double direction = (Integer.parseInt(directionStr) % 360) / (2 * Math.PI);
+                        double speed = Integer.parseInt(speedStr);
+                        currentPlanet.setSpeed(new Vector(
+                                speed * Math.cos(direction),
+                                speed * Math.sin(direction)));
+                    }
+
+
+
+
+                }
+
+            }
+        });
+
+        dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+            }
+        });
+
+        AlertDialog alertDialog = dialogBuilder.create();
+        alertDialog.show();
+
+        /*
+        alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // if EditText is empty disable closing on possitive button
+
+
+
+                boolean wantToCloseDialog = (setMass.getText().toString().trim().isEmpty());
+
+                if (!wantToCloseDialog) {
+                    alertDialog.dismiss();
+                }
+
+            }
+        });
+
+         */
     }
 
 }

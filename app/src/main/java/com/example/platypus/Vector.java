@@ -40,4 +40,12 @@ public class Vector {
         x = xx;
         y = yy;
     }
+
+    public double getModulus() {
+        return Math.pow(Math.pow(x, 2) + Math.pow(y, 2), 0.5);
+    }
+
+    public double getAngle() {
+        return Math.atan(y / x) / (Math.PI * 2) * 360;
+    }
 }

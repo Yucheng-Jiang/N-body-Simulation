@@ -42,13 +42,6 @@
             android:text="Click to start"
             android:visibility="visible" />
 
-        <SeekBar
-            android:id="@+id/MassSeekBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:visibility="gone" />
-
         <Button
             android:id="@+id/Delete"
             android:layout_width="wrap_content"
@@ -56,6 +49,14 @@
             android:layout_weight="1"
             android:text="Delete"
             android:visibility="gone" />
+
+        <Button
+            android:id="@+id/Edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Edit"
+            android:visibility="invisible" />
 
     </LinearLayout>
 

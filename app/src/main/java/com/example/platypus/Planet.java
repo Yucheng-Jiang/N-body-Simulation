@@ -100,5 +100,19 @@ public class Planet {
         return this.speed;
     }
 
+    public void setMass(int setMass) {
+        this.mass = setMass;
+    }
+
+    public void setSpeed(Vector speed) {
+        this.speed = speed;
+    }
+
+    public void setPosition(Vector position) {
+        this.position = position;
+    }
+
+
+
 
 }
