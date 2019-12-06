@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Platypus</string>
+
+    <string name="title_activity_game_mode_selection">GameModeSelectionActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+
+    <string name="title_activity_game_mode">GameModeActivity</string>
+    <string name="title_activity_game_selection">GameSelectionActivity</string>
 </resources>

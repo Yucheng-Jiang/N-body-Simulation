@@ -55,72 +55,42 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-        //test add planets
         massText = findViewById(R.id.MassText);
         speedText = findViewById(R.id.SpeedText);
         positionText = findViewById(R.id.PositionText);
         delete = findViewById(R.id.Delete);
         edit = findViewById(R.id.Edit);
+        Button startButton = findViewById(R.id.startButton);
+        CustomView customView = findViewById(R.id.customView);
 
         Planet.planetList.clear();
-        new Planet(200, new Vector(300,600), new Vector(0, 0));
-        new Planet(50, new Vector(400,400), new Vector(2, 2));
-        new Planet(100, new Vector(600,600), new Vector(1, 1));
+        new Planet(600, new Vector(-200,200), new Vector(-20, -20));
+        new Planet(600, new Vector(200,200), new Vector(-20, 20));
+        new Planet(600, new Vector(200,-200), new Vector(20, 20));
+        new Planet(600, new Vector(-200,-200), new Vector(20, -20));
         //
-        CustomView customView = findViewById(R.id.customView);
-        Button testButton = findViewById(R.id.testButton);
-        testButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                customView.setmPosXY(100, 100);
+
+        delete.setOnClickListener(unused -> {
+            Planet.planetList.remove(currentPlanet);
+            if (Planet.planetList.size() == 0) {
+                new Planet(50, new Vector(0, 0), new Vector(0,0));
+                Toast.makeText(getApplicationContext(), "Default Planet Created", Toast.LENGTH_SHORT).show();
             }
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    startButton.performClick();
+                    updateSpinner();
+                }
+            });
+            updateData(currentPlanet);
         });
 
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                updateSpinner();
-            }
-        };
+        edit.setOnClickListener(unused -> {
+            editInfo(false);
+        });
 
-        Runnable runnable1 = new Runnable() {
-            @Override
-            public void run() {
-                updateData(currentPlanet);
-                if (currentPlanet == null) {
-                    delete.setVisibility(View.GONE);
-                    edit.setVisibility(View.GONE);
-                    return;
-                } else {
-                    if (Planet.planetList.size() > 1) {
-                        delete.setVisibility(View.VISIBLE);
-                        delete.setOnClickListener(unused -> {
-                            Planet.planetList.remove(currentPlanet);
-                            handler.post(runnable);
 
-                            if (Planet.planetList.size() == 0) {
-                                delete.setVisibility(View.GONE);
-                                currentPlanet = null;
-                            }
-                            updateData(currentPlanet);
-
-                            if (Planet.planetList.size() == 0) {
-                                new Planet(50, new Vector(0, 0), new Vector(0,0));
-                                Toast.makeText(getApplicationContext(), "Default Planet Created", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
-
-                    edit.setVisibility(View.VISIBLE);
-                    edit.setOnClickListener(unused -> {
-                        editInfo(false);
-                        handler.post(runnable);
-                    });
-                }
-            }
-        };
-
-        Button startButton = findViewById(R.id.startButton);
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -132,25 +102,37 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             for (Planet p : Planet.planetList) {
-                                if (!p.update(0.1)) {
+                                p.calcToMove(0.004);
+                            }
+                            for (Planet p : Planet.planetList) {
+                                if (!p.update()) {
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            updateSpinner();
+                                        }
+                                    });
                                     vibrator.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE));
                                     if (Planet.planetList.size() == 0) {
-                                        new Planet(50, new Vector(0, 0), new Vector(0,0));
+                                        new Planet(50, new Vector(0, 0), new Vector(0, 0));
                                         runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {
                                                 Toast.makeText(getApplicationContext(), "Default Planet Created", Toast.LENGTH_SHORT).show();
+                                                startButton.performClick();
                                             }
                                         });
-
+                                        break;
                                     }
-                                    handler.post(runnable);
-                                    return;
                                 }
                             }
-                            handler.post(runnable1);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    updateData(currentPlanet);
+                                }
+                            });
                         }
-
                     }, 0, 1);
                 } else {
                     startButton.setText("Click To Start");
@@ -171,7 +153,6 @@ public class MainActivity extends AppCompatActivity {
                 //textViewMass.setText(Planet.planetList.get(position).getMass());
                 if (parent.getItemAtPosition(position).equals("Add Planet")) {
                     editInfo(true);
-                    handler.post(runnable);
                 } else {
                     currentPlanet = Planet.planetList.get(position);
                     float x = customView.getWidth() / 2 - (float) currentPlanet.getPosition().getX();
@@ -206,12 +187,13 @@ public class MainActivity extends AppCompatActivity {
             positionText.setText("Position");
             speedText.setText("Velocity");
             return;
+        } else {
+            massText.setText("Mass: " + round(planet.getMass()));
+            positionText.setText("Position: x = " + round(planet.getPosition().getX())
+                    + " y = " + round(planet.getPosition().getY()));
+            speedText.setText("Velocity: x = " + round(planet.getSpeed().getX())
+                    + " y = " + round(planet.getPosition().getY()));
         }
-        massText.setText("Mass: " + round(planet.getMass()));
-        positionText.setText("Position: x = " + round(planet.getPosition().getX())
-                + " y = " + round(planet.getPosition().getY()));
-        speedText.setText("Velocity: x = " + round(planet.getSpeed().getX())
-                + " y = " + round(planet.getPosition().getY()));
     }
     public static String round(double value) {
         DecimalFormat decimalFormat = new DecimalFormat("0.00");
@@ -304,13 +286,12 @@ public class MainActivity extends AppCompatActivity {
                                 speed * Math.sin(direction)));
                     }
                 }
-                Runnable runnable = new Runnable() {
+                runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         updateSpinner();
                     }
-                };
-                handler.post(runnable);
+                });
             }
         });
         dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -319,7 +300,5 @@ public class MainActivity extends AppCompatActivity {
         });
         AlertDialog alertDialog = dialogBuilder.create();
         alertDialog.show();
-        //
     }
-
 }
