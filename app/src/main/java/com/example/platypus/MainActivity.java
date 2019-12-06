@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (isRunning == false) {
-                    startButton.setText("Click To Stop");
+                    startButton.setText("Stop");
                     isRunning = true;
                     timer = new Timer();
                     timer.schedule(new TimerTask() {
@@ -192,7 +192,7 @@ public class MainActivity extends AppCompatActivity {
             positionText.setText("Position: x = " + round(planet.getPosition().getX())
                     + " y = " + round(planet.getPosition().getY()));
             speedText.setText("Velocity: x = " + round(planet.getSpeed().getX())
-                    + " y = " + round(planet.getPosition().getY()));
+                    + " y = " + round(planet.getSpeed().getY()));
         }
     }
     public static String round(double value) {
