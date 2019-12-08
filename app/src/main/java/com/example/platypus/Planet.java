@@ -23,6 +23,7 @@ public class Planet {
     public Path path = new Path();
     private Vector positionToAdd;
     private Vector speedToAdd;
+    public boolean isPlayer;
 
     Planet(final double setMass, final Vector setPosition, final Vector setSpeed) {
         this.mass = setMass;
@@ -32,7 +33,11 @@ public class Planet {
         Random rand = new Random();
         this.color = Color.rgb(rand.nextFloat() + 0.1f, rand.nextFloat() + 0.1f, rand.nextFloat() + 0.1f);
         path.moveTo((float) position.getX(), (float) position.getY());
+    }
 
+    Planet(final double setMass, final Vector setPosition, final Vector setSpeed, final boolean setIsPlayer) {
+        this(setMass, setPosition, setSpeed);
+        isPlayer = setIsPlayer;
     }
 
 
@@ -47,7 +52,7 @@ public class Planet {
     private Vector calcNetForce() {
         Vector netForce = new Vector(0, 0);
         for (Planet p : Planet.planetList) {
-            if (p != this) {
+            if (p != this && p.isPlayer == false) {
                 double distance = p.position.distance(position);
                 double force = GRAVATATIONAL * mass * p.getMass()
                         / Math.pow(distance, 2);

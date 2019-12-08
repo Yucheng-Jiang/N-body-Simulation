@@ -89,9 +89,18 @@ public class CustomView extends View {
     private class SimpleGestureListenerImpl extends GestureDetector.SimpleOnGestureListener {
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            mPosX -= distanceX;
-            mPosY -= distanceY;
-            invalidate();
+            Vector v = new Vector(e1.getX() / mScaleFactor - mPosX, e1.getY() / mScaleFactor - mPosY);
+            Toast.makeText(getContext(), (v.getX() + " " +v.getY()), Toast.LENGTH_SHORT).show();
+            Planet p = GameActivity.playerPlanet;
+            if (v.distance(p.getPosition()) < Math.sqrt(p.getMass()) + 20) {
+                p.getPosition().add(new Vector(distanceX, distanceY));
+                invalidate();
+                Toast.makeText(getContext(), "***********", Toast.LENGTH_SHORT).show();
+            } else {
+                mPosX -= distanceX;
+                mPosY -= distanceY;
+                invalidate();
+            }
             return true;
         }
     }
