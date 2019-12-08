@@ -71,6 +71,13 @@ public class LabActivity extends AppCompatActivity {
         //
 
         delete.setOnClickListener(unused -> {
+            boolean currentStop = false;
+            if (isRunning) {
+                startButton.performClick();
+            } else {
+                currentStop = true;
+            }
+
             Planet.planetList.remove(currentPlanet);
             if (Planet.planetList.size() == 0) {
                 new Planet(50, new Vector(0, 0), new Vector(0,0));
@@ -79,11 +86,15 @@ public class LabActivity extends AppCompatActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    startButton.performClick();
                     updateSpinner();
                 }
             });
             updateData(currentPlanet);
+
+            if (!currentStop) {
+                startButton.performClick();
+            }
+
         });
 
         edit.setOnClickListener(unused -> {
@@ -106,7 +117,6 @@ public class LabActivity extends AppCompatActivity {
                             }
                             for (Planet p : Planet.planetList) {
                                 if (!p.update()) {
-                                    System.out.println("+++++++++++++++++++++++++++++");
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
@@ -125,6 +135,7 @@ public class LabActivity extends AppCompatActivity {
                                         });
                                         break;
                                     }
+                                    return;
                                 }
                             }
                             runOnUiThread(new Runnable() {
