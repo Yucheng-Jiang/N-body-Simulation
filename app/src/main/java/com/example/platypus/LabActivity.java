@@ -19,6 +19,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,6 +29,7 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -44,8 +46,8 @@ public class LabActivity extends AppCompatActivity {
     private TextView speedText;
     private TextView positionText;
     private Planet currentPlanet = null;
-    private Button delete;
-    private Button edit;
+    private ImageButton delete;
+    private ImageButton edit;
     private Vibrator vibrator;
     private boolean currentStop;
 
@@ -61,14 +63,21 @@ public class LabActivity extends AppCompatActivity {
         positionText = findViewById(R.id.PositionText);
         delete = findViewById(R.id.Delete);
         edit = findViewById(R.id.Edit);
-        Button startButton = findViewById(R.id.startButton);
+        ImageButton startButton = findViewById(R.id.startButton);
         CustomView customView = findViewById(R.id.customView);
 
         Planet.planetList.clear();
+        /*
         new Planet(600, new Vector(-200,200), new Vector(-20, -20));
         new Planet(600, new Vector(200,200), new Vector(-20, 20));
         new Planet(600, new Vector(200,-200), new Vector(20, 20));
         new Planet(600, new Vector(-200,-200), new Vector(20, -20));
+
+         */
+        Random random = new Random();
+        for (int i = 0; i < 100; i++) {
+            new Planet(random.nextInt(1000), new Vector(random.nextInt(1000), random.nextInt(1000)), new Vector(random.nextInt(5), random.nextInt(5)));
+        }
         //
 
         delete.setOnClickListener(unused -> {
@@ -107,7 +116,7 @@ public class LabActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (isRunning == false) {
-                    startButton.setText("Stop");
+                    startButton.setImageResource(android.R.drawable.ic_media_pause);
                     isRunning = true;
                     timer = new Timer();
                     timer.schedule(new TimerTask() {
@@ -148,7 +157,7 @@ public class LabActivity extends AppCompatActivity {
                         }
                     }, 0, 1);
                 } else {
-                    startButton.setText("Start");
+                    startButton.setImageResource(android.R.drawable.ic_media_play);
                     isRunning = false;
                     timer.cancel();
                     timer.purge();
@@ -157,6 +166,7 @@ public class LabActivity extends AppCompatActivity {
         });
 
         spinner = findViewById(R.id.spinner);
+        spinner.setTooltipText("");
         updateSpinner();
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -211,7 +221,7 @@ public class LabActivity extends AppCompatActivity {
         return decimalFormat.format(value);
     }
     public void editInfo(boolean isNew) {
-        Button startButton = findViewById(R.id.startButton);
+        ImageButton startButton = findViewById(R.id.startButton);
 
         currentStop = false;
 
@@ -333,6 +343,9 @@ public class LabActivity extends AppCompatActivity {
         });
         dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
+                if (!currentStop) {
+                    startButton.performClick();
+                }
             }
         });
         AlertDialog alertDialog = dialogBuilder.create();
