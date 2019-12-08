@@ -108,7 +108,7 @@ public class GameView extends View {
         }
         @Override
         public boolean onDown(MotionEvent e) {
-            GameActivity.playerPlanet.setExtraForce(e.getX(), e.getY());
+            GameActivity.playerPlanet.setExtraSpeed(e.getX() / mScaleFactor - mPosX, e.getY() / mScaleFactor - mPosY);
 
             Planet p = GameActivity.playerPlanet;
             Vector v = new Vector(e.getX() / mScaleFactor - mPosX, e.getY() / mScaleFactor - mPosY);

@@ -23,7 +23,8 @@ public class Planet {
     private Vector positionToAdd;
     private Vector speedToAdd;
     public boolean isPlayer;
-    private Vector extraForce = new Vector();
+    private Vector extraSpeed = new Vector();
+    private static final float EXTRA_SPEED_MODULUS = 30;
 
     Planet(final double setMass, final Vector setPosition, final Vector setSpeed) {
         this.mass = setMass;
@@ -51,7 +52,6 @@ public class Planet {
 
     private Vector calcNetForce() {
         Vector netForce = new Vector(0, 0);
-        netForce.add(extraForce);
         for (Planet p : Planet.planetList) {
             if (p != this && p.isPlayer == false) {
                 double distance = p.position.distance(position);
@@ -75,6 +75,7 @@ public class Planet {
                 time * calcNetForce().getX() / mass,
                 time * calcNetForce().getY() / mass
         );
+        speedToAdd.add(extraSpeed);
         positionToAdd = new Vector(
                 speed.getX() * time + Math.pow(time, 2) * acceleration.getX() / 2,
                 speed.getY() * time + Math.pow(time, 2) * acceleration.getY() / 2
@@ -84,6 +85,7 @@ public class Planet {
     public boolean update() {
         position.add(positionToAdd);
         speed.add(speedToAdd);
+        extraSpeed = new Vector();
         path.lineTo((float) position.getX(), (float) position.getY());
 
         if (isCrashed()) {
@@ -114,24 +116,12 @@ public class Planet {
         return false;
     }
 
-    public void setExtraForce(float x, float y) {
+    public void setExtraSpeed(float x, float y) {
         if (isPlayer == false) {
             return;
         }
-        extraForce = new Vector(position.getX() - x, position.getY() - y);
-        extraForce.multiply(1 / extraForce.getModulus());
-        extraForce.multiply(5000);
-        //System.out.println("=================================" + extraForce.getModulus() +"   =="+ x);
-
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                extraForce = new Vector();
-                //System.out.println("=================================" + extraForce.getModulus() +"   =="+ x);
-                //write your code here to be executed after 1 second
-            }
-        }, 100);
+        extraSpeed = new Vector(position.getX() - x, position.getY() - y);
+        extraSpeed.multiply(EXTRA_SPEED_MODULUS / extraSpeed.getModulus());
     }
 
 
