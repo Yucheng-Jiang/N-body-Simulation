@@ -121,14 +121,14 @@ public class Planet {
         extraForce = new Vector(position.getX() - x, position.getY() - y);
         extraForce.multiply(1 / extraForce.getModulus());
         extraForce.multiply(5000);
-        System.out.println("=================================" + extraForce.getModulus() +"   =="+ x);
+        //System.out.println("=================================" + extraForce.getModulus() +"   =="+ x);
 
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 extraForce = new Vector();
-                System.out.println("=================================" + extraForce.getModulus() +"   =="+ x);
+                //System.out.println("=================================" + extraForce.getModulus() +"   =="+ x);
                 //write your code here to be executed after 1 second
             }
         }, 100);

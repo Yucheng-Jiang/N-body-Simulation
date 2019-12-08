@@ -33,10 +33,10 @@ public class GameActivity extends AppCompatActivity {
         TextView timeText = findViewById(R.id.timeText);
 
         Planet.planetList.clear();
-//        new Planet(600, new Vector(-200, 200), new Vector(-20, -20));
-//        new Planet(600, new Vector(200, 200), new Vector(-20, 20));
-//        new Planet(600, new Vector(200, -200), new Vector(20, 20));
-//        new Planet(600, new Vector(-200, -200), new Vector(20, -20));
+        new Planet(600, new Vector(-200, 200), new Vector(-20, -20));
+        new Planet(600, new Vector(200, 200), new Vector(-20, 20));
+        new Planet(600, new Vector(200, -200), new Vector(20, 20));
+        new Planet(600, new Vector(-200, -200), new Vector(20, -20));
         //
         playerPlanet = new Planet(150, new Vector(0, 0), new Vector(20, -20), true);
 
@@ -78,7 +78,7 @@ public class GameActivity extends AppCompatActivity {
                         }
                     }, 0, 1);
                 } else {
-                    startButton.setText("Click To Start");
+                    startButton.setText("Start");
                     isRunning = false;
                     timer.cancel();
                     timer.purge();

@@ -106,6 +106,7 @@ public class LabActivity extends AppCompatActivity {
                             }
                             for (Planet p : Planet.planetList) {
                                 if (!p.update()) {
+                                    System.out.println("+++++++++++++++++++++++++++++");
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
@@ -135,7 +136,7 @@ public class LabActivity extends AppCompatActivity {
                         }
                     }, 0, 1);
                 } else {
-                    startButton.setText("Click To Start");
+                    startButton.setText("Start");
                     isRunning = false;
                     timer.cancel();
                     timer.purge();
@@ -149,8 +150,6 @@ public class LabActivity extends AppCompatActivity {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                //TextView textViewMass = findViewById(R.id.mass);
-                //textViewMass.setText(Planet.planetList.get(position).getMass());
                 if (parent.getItemAtPosition(position).equals("Add Planet")) {
                     editInfo(true);
                 } else {
@@ -200,6 +199,9 @@ public class LabActivity extends AppCompatActivity {
         return decimalFormat.format(value);
     }
     public void editInfo(boolean isNew) {
+        Button startButton = findViewById(R.id.startButton);
+        startButton.performClick();
+
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         dialogBuilder.setCancelable(false);
         LayoutInflater inflater = this.getLayoutInflater();
@@ -239,6 +241,7 @@ public class LabActivity extends AppCompatActivity {
                 String yStr = setY.getText().toString().trim();
                 String speedStr = setSpeedValue.getText().toString().trim();
                 //
+
                 if (isNew) {
                     if (mass.length() == 0) {
                         mass = "100";
@@ -256,12 +259,19 @@ public class LabActivity extends AppCompatActivity {
                         yStr = "200";
                     }
                     double direction = (Integer.parseInt(directionStr) % 360) / (2 * Math.PI);
-                    int x = Integer.parseInt(xStr);
-                    int y = Integer.parseInt(yStr);
+                    Vector position = new Vector(Integer.parseInt(xStr), Integer.parseInt(yStr));
+                    int m = Integer.parseInt(mass);
+
+                    for (Planet p : Planet.planetList) {
+                        if (position.distance(p.getPosition()) <= Math.pow(m, 0.5) + Math.pow(p.getMass(), 0.5)) {
+                            Toast.makeText(getApplicationContext(), "Current position has planet", Toast.LENGTH_SHORT).show();
+                            startButton.performClick();
+                            return;
+                        }
+                    }
+
                     double speed = Integer.parseInt(speedStr);
-                    new Planet(Integer.parseInt(mass),
-                            new Vector(x, y),
-                            new Vector(speed * Math.cos(direction), speed * Math.sin(direction)));
+                    new Planet(m, position, new Vector(speed * Math.cos(direction), speed * Math.sin(direction)));
                 } else {
                     if (mass.length() != 0) {
                         currentPlanet.setMass(Integer.parseInt(mass));
@@ -289,10 +299,12 @@ public class LabActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        startButton.performClick();
                         updateSpinner();
                     }
                 });
             }
+
         });
         dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
