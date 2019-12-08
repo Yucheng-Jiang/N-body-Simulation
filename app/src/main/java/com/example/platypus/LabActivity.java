@@ -47,6 +47,7 @@ public class LabActivity extends AppCompatActivity {
     private Button delete;
     private Button edit;
     private Vibrator vibrator;
+    private boolean currentStop;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -211,7 +212,15 @@ public class LabActivity extends AppCompatActivity {
     }
     public void editInfo(boolean isNew) {
         Button startButton = findViewById(R.id.startButton);
-        startButton.performClick();
+
+        currentStop = false;
+
+        if (isRunning) {
+            startButton.performClick();
+        } else {
+            currentStop = true;
+        }
+
 
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         dialogBuilder.setCancelable(false);
@@ -276,7 +285,9 @@ public class LabActivity extends AppCompatActivity {
                     for (Planet p : Planet.planetList) {
                         if (position.distance(p.getPosition()) <= Math.pow(m, 0.5) + Math.pow(p.getMass(), 0.5)) {
                             Toast.makeText(getApplicationContext(), "Current position has planet", Toast.LENGTH_SHORT).show();
-                            startButton.performClick();
+                            if (!currentStop) {
+                                startButton.performClick();
+                            }
                             return;
                         }
                     }
@@ -310,10 +321,13 @@ public class LabActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        startButton.performClick();
                         updateSpinner();
                     }
                 });
+
+                if (!currentStop) {
+                    startButton.performClick();
+                }
             }
 
         });
@@ -323,5 +337,6 @@ public class LabActivity extends AppCompatActivity {
         });
         AlertDialog alertDialog = dialogBuilder.create();
         alertDialog.show();
+
     }
 }
