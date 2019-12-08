@@ -1,19 +1,18 @@
 package com.example.platypus;
 
-
-
 import android.graphics.Color;
 import android.graphics.Path;
-
+import android.os.Handler;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class Planet {
-
     public static List<Planet> planetList = new ArrayList<>();
     private static final double GRAVATATIONAL = 6.67 * Math.pow(10, 2);
     private double mass;
@@ -24,6 +23,7 @@ public class Planet {
     private Vector positionToAdd;
     private Vector speedToAdd;
     public boolean isPlayer;
+    private Vector extraForce = new Vector();
 
     Planet(final double setMass, final Vector setPosition, final Vector setSpeed) {
         this.mass = setMass;
@@ -51,6 +51,7 @@ public class Planet {
 
     private Vector calcNetForce() {
         Vector netForce = new Vector(0, 0);
+        netForce.add(extraForce);
         for (Planet p : Planet.planetList) {
             if (p != this && p.isPlayer == false) {
                 double distance = p.position.distance(position);
@@ -104,8 +105,35 @@ public class Planet {
                 }
             }
         }
+        if (isPlayer == true) {
+            if (this.position.distance(new Vector(0, 0)) > GameActivity.PLAYER_MOVE_RANGE) {
+                planetList.remove(this);
+                return true;
+            }
+        }
         return false;
     }
+
+    public void setExtraForce(float x, float y) {
+        if (isPlayer == false) {
+            return;
+        }
+        extraForce = new Vector(position.getX() - x, position.getY() - y);
+        extraForce.multiply(1 / extraForce.getModulus());
+        extraForce.multiply(5000);
+        System.out.println("=================================" + extraForce.getModulus() +"   =="+ x);
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                extraForce = new Vector();
+                System.out.println("=================================" + extraForce.getModulus() +"   =="+ x);
+                //write your code here to be executed after 1 second
+            }
+        }, 100);
+    }
+
 
     public int getColor() {
         return this.color;

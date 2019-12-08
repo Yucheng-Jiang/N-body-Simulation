@@ -2,64 +2,59 @@ package com.example.platypus;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class GameActivity extends AppCompatActivity {
     private Timer timer;
-    private boolean isRunning = false;
+    public static boolean isRunning = false;
     private Vibrator vibrator;
     public static Planet playerPlanet;
+    private static final double UPDATE_TIME_INTERVAL = 0.004;
+    private float gameRunningTime;
+    public static  final float PLAYER_MOVE_RANGE = 900;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         // project starts here
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
         vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
         Button startButton = findViewById(R.id.startButton);
-        CustomView customView = findViewById(R.id.customView);
+        GameView gameView = findViewById(R.id.gameView);
+        TextView timeText = findViewById(R.id.timeText);
 
         Planet.planetList.clear();
-        new Planet(600, new Vector(-200,200), new Vector(-20, -20));
-        new Planet(600, new Vector(200,200), new Vector(-20, 20));
-        new Planet(600, new Vector(200,-200), new Vector(20, 20));
-        new Planet(600, new Vector(-200,-200), new Vector(20, -20));
+//        new Planet(600, new Vector(-200, 200), new Vector(-20, -20));
+//        new Planet(600, new Vector(200, 200), new Vector(-20, 20));
+//        new Planet(600, new Vector(200, -200), new Vector(20, 20));
+//        new Planet(600, new Vector(-200, -200), new Vector(20, -20));
         //
-        playerPlanet = new Planet(150, new Vector(0,0), new Vector(20, -20), true);
+        playerPlanet = new Planet(150, new Vector(0, 0), new Vector(20, -20), true);
 
 
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(final View v) {
                 if (isRunning == false) {
                     startButton.setText("Stop");
                     isRunning = true;
+                    gameView.invalidate();
                     timer = new Timer();
                     timer.schedule(new TimerTask() {
                         @Override
                         public void run() {
+                            gameRunningTime += 0.001;
                             for (Planet p : Planet.planetList) {
-                                p.calcToMove(0.004);
+                                p.calcToMove(UPDATE_TIME_INTERVAL);
                             }
                             for (Planet p : Planet.planetList) {
                                 if (!p.update()) {
@@ -74,6 +69,12 @@ public class GameActivity extends AppCompatActivity {
                                     break;
                                 }
                             }
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    timeText.setText("Time: " + gameRunningTime);
+                                }
+                            });
                         }
                     }, 0, 1);
                 } else {

@@ -32,9 +32,13 @@ public class Vector {
         x = x + xx;
         y = y + yy;
     }
-    public void minus(Vector v) {
+    public void minus(final Vector v) {
         x = x - v.getX();
         y = y - v.getY();
+    }
+    public void multiply(final double d) {
+        x *= d;
+        y *= d;
     }
     public void set(double xx, double yy) {
         x = xx;
