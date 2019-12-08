@@ -86,9 +86,11 @@ public class CustomView extends View {
     private class SimpleGestureListenerImpl extends GestureDetector.SimpleOnGestureListener {
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            mPosX -= distanceX;
-            mPosY -= distanceY;
-            invalidate();
+            if (e2.getPointerCount() == 2) {
+                mPosX -= distanceX;
+                mPosY -= distanceY;
+                invalidate();
+            }
             return true;
         }
     }

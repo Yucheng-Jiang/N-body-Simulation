@@ -95,10 +95,11 @@ public class GameView extends View {
     private class SimpleGestureListenerImpl extends GestureDetector.SimpleOnGestureListener {
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            System.out.println(e1.getPointerCount() + "  " + e2.getPointerCount());
             if (isPlayerPlanetTouched == true && GameActivity.isRunning == false) {
                 GameActivity.playerPlanet.getPosition().minus(new Vector(distanceX, distanceY));
                 invalidate();
-            } else {
+            } else if (e2.getPointerCount() == 2) {
                 mPosX -= distanceX;
                 mPosY -= distanceY;
                 invalidate();
@@ -116,12 +117,6 @@ public class GameView extends View {
             } else {
                 isPlayerPlanetTouched = false;
             }
-            return true;
-        }
-        @Override
-        public boolean onSingleTapUp(MotionEvent e) {
-            Toast.makeText(getContext(), "onsingletapconfrimed", Toast.LENGTH_SHORT).show();
-           // GameActivity.playerPlanet.setExtraForce(e.getX(), e.getY());
             return true;
         }
     }
