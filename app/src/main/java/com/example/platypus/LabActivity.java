@@ -38,10 +38,8 @@ import java.util.TimerTask;
 
 public class LabActivity extends AppCompatActivity {
     private Timer timer;
-    private boolean isRunning = false;
+    public static boolean isRunning = false;
     private Spinner spinner;
-    private Handler handler = new Handler();
-    //private SeekBar massSeekBar = findViewById(R.id.MassSeekBar);
     private TextView massText;
     private TextView speedText;
     private TextView positionText;
@@ -190,6 +188,19 @@ public class LabActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        finish();
+        System.out.println("===================================");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        System.out.println("***********************************");
+    }
+
     public void updateSpinner() {
         List<String> list = new ArrayList<>();
         for (int i = 0; i < Planet.planetList.size(); i++) {
@@ -216,10 +227,12 @@ public class LabActivity extends AppCompatActivity {
                     + " y = " + round(planet.getSpeed().getY()));
         }
     }
+
     public static String round(double value) {
         DecimalFormat decimalFormat = new DecimalFormat("0.00");
         return decimalFormat.format(value);
     }
+
     public void editInfo(boolean isNew) {
         ImageButton startButton = findViewById(R.id.startButton);
 

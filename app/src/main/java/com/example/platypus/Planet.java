@@ -19,7 +19,7 @@ public class Planet {
     private Vector position;
     private Vector speed;
     private int color;
-    public Path path = new Path();
+    public Path path;
     private Vector positionToAdd;
     private Vector speedToAdd;
     public boolean isPlayer;
@@ -33,6 +33,7 @@ public class Planet {
         planetList.add(this);
         Random rand = new Random();
         this.color = Color.rgb(rand.nextFloat() + 0.1f, rand.nextFloat() + 0.1f, rand.nextFloat() + 0.1f);
+        path = new Path();
         path.moveTo((float) position.getX(), (float) position.getY());
     }
 
@@ -143,6 +144,8 @@ public class Planet {
 
     public void setPosition(Vector position) {
         this.position = position;
+        path.reset();
+        path.moveTo((float) position.getX(), (float) position.getY());
     }
 
 

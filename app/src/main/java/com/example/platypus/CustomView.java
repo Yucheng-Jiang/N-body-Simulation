@@ -1,13 +1,19 @@
 package com.example.platypus;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageButton;
 
 import androidx.annotation.Nullable;
 
@@ -19,6 +25,7 @@ public class CustomView extends View {
     private float mPosY = 0;
     private float mFocusX;
     private float mFocusY;
+    private Planet touchedPlanet;
 
     public CustomView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -30,6 +37,11 @@ public class CustomView extends View {
 
     public CustomView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+
     }
 
     public CustomView(Context context) {
@@ -54,6 +66,9 @@ public class CustomView extends View {
             paint.setStyle(Paint.Style.STROKE);
             canvas.drawPath(p.path, paint);
         }
+        if (!LabActivity.isRunning) {
+            drawVelocity(canvas);
+        }
         invalidate();
     }
 
@@ -69,6 +84,41 @@ public class CustomView extends View {
         mPosY = y;
     }
 
+    private void drawVelocity(Canvas canvas) {
+        Paint paint = new Paint();
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(4);
+        for (Planet p : Planet.planetList) {
+            paint.setColor(p.getColor());
+
+            float fromX = (float) p.getPosition().getX();
+            float fromY = (float) p.getPosition().getY();
+            float toX = (float) (p.getSpeed().getX() + p.getPosition().getX());
+            float toY = (float) (p.getSpeed().getY() + p.getPosition().getY());
+
+            float height = 20;
+            float bottom = 10;
+
+            canvas.drawLine(fromX, fromY, toX, toY, paint);
+            float distance = (float) Math.sqrt((toX - fromX) * (toX - fromX)
+                    + (toY - fromY) * (toY - fromY));
+            float distanceX = toX - fromX;
+            float distanceY = toY - fromY;
+            float pointX = toX - (height / distance * distanceX);
+            float pointY = toY - (height / distance * distanceY);
+
+            Path path = new Path();
+            path.moveTo(toX, toY);
+
+            path.lineTo(pointX + (bottom / distance * distanceY), pointY
+                    - (bottom / distance * distanceX));
+            path.lineTo(pointX - (bottom / distance * distanceY), pointY
+                    + (bottom / distance * distanceX));
+            path.close();
+            paint.setStyle(Paint.Style.FILL);
+            canvas.drawPath(path, paint);
+        }
+    }
 
     private class SimpleScaleListenerImpl extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
@@ -90,6 +140,23 @@ public class CustomView extends View {
                 mPosX -= distanceX;
                 mPosY -= distanceY;
                 invalidate();
+            }
+            if (e2.getPointerCount() == 1 && touchedPlanet != null && LabActivity.isRunning == false) {
+                touchedPlanet.setPosition(touchedPlanet.getPosition().getMinus(new Vector(distanceX, distanceY)));
+                invalidate();
+            }
+            return true;
+        }
+        @Override
+        public boolean onDown(MotionEvent e) {
+            Vector v = new Vector(e.getX() / mScaleFactor - mPosX, e.getY() / mScaleFactor - mPosY);
+            for (Planet p : Planet.planetList) {
+                if (v.distance(p.getPosition()) < Math.sqrt(p.getMass()) + 20) {
+                    touchedPlanet = p;
+                    break;
+                } else {
+                    touchedPlanet = null;
+                }
             }
             return true;
         }

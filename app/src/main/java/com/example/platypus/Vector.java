@@ -36,6 +36,9 @@ public class Vector {
         x = x - v.getX();
         y = y - v.getY();
     }
+    public Vector getMinus(final Vector v) {
+        return new Vector(x - v.getX(), y - v.getY());
+    }
     public void multiply(final double d) {
         x *= d;
         y *= d;

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -22,6 +23,7 @@ public class GameView extends View {
     private float mFocusX;
     private float mFocusY;
     private boolean isPlayerPlanetTouched;
+    private boolean isVelocityArrowTouched;
 
     public GameView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -62,6 +64,10 @@ public class GameView extends View {
         }
         paint.setColor(Color.RED);
         canvas.drawCircle(0, 0, GameActivity.PLAYER_MOVE_RANGE, paint);
+        if (GameActivity.isRunning == false) {
+            drawVelocity(canvas);
+            invalidate();
+        }
         if (GameActivity.isRunning) {
             invalidate();
         }
@@ -77,6 +83,41 @@ public class GameView extends View {
     public void setmPosXY(float x, float y) {
         mPosX = x;
         mPosY = y;
+    }
+
+    private void drawVelocity(Canvas canvas) {
+        Paint paint = new Paint();
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(4);
+        Planet p = GameActivity.playerPlanet;
+        paint.setColor(p.getColor());
+
+        float fromX = (float) p.getPosition().getX();
+        float fromY = (float) p.getPosition().getY();
+        float toX = (float) (p.getSpeed().getX() + p.getPosition().getX());
+        float toY = (float) (p.getSpeed().getY() + p.getPosition().getY());
+
+        float height = 20;
+        float bottom = 10;
+
+        canvas.drawLine(fromX, fromY, toX, toY, paint);
+        float distance = (float) Math.sqrt((toX - fromX) * (toX - fromX)
+                + (toY - fromY) * (toY - fromY));
+        float distanceX = toX - fromX;
+        float distanceY = toY - fromY;
+        float pointX = toX - (height / distance * distanceX);
+        float pointY = toY - (height / distance * distanceY);
+
+        Path path = new Path();
+        path.moveTo(toX, toY);
+
+        path.lineTo(pointX + (bottom / distance * distanceY), pointY
+                - (bottom / distance * distanceX));
+        path.lineTo(pointX - (bottom / distance * distanceY), pointY
+                + (bottom / distance * distanceX));
+        path.close();
+        paint.setStyle(Paint.Style.FILL);
+        canvas.drawPath(path, paint);
     }
 
     private class SimpleScaleListenerImpl extends ScaleGestureDetector.SimpleOnScaleGestureListener {
@@ -95,9 +136,14 @@ public class GameView extends View {
     private class SimpleGestureListenerImpl extends GestureDetector.SimpleOnGestureListener {
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            System.out.println(e1.getPointerCount() + "  " + e2.getPointerCount());
-            if (isPlayerPlanetTouched == true && GameActivity.isRunning == false) {
-                GameActivity.playerPlanet.getPosition().minus(new Vector(distanceX, distanceY));
+            if (isVelocityArrowTouched && GameActivity.isRunning == false) {
+                GameActivity.playerPlanet.setSpeed(
+                        GameActivity.playerPlanet.getSpeed().getMinus(new Vector(distanceX, distanceY))
+                );
+            } else if (isPlayerPlanetTouched == true && GameActivity.isRunning == false) {
+                GameActivity.playerPlanet.setPosition(
+                        GameActivity.playerPlanet.getPosition().getMinus(new Vector(distanceX, distanceY))
+                );
                 invalidate();
             } else if (e2.getPointerCount() == 2) {
                 mPosX -= distanceX;
@@ -112,10 +158,17 @@ public class GameView extends View {
 
             Planet p = GameActivity.playerPlanet;
             Vector v = new Vector(e.getX() / mScaleFactor - mPosX, e.getY() / mScaleFactor - mPosY);
-            if (v.distance(p.getPosition()) < Math.sqrt(p.getMass()) + 20) {
-                isPlayerPlanetTouched = true;
+            Vector position = new Vector(p.getPosition());
+            position.add(p.getSpeed());
+            if (v.distance(position) < 50) {
+                isVelocityArrowTouched = true;
             } else {
-                isPlayerPlanetTouched = false;
+                isVelocityArrowTouched = false;
+                if (v.distance(p.getPosition()) < Math.sqrt(p.getMass()) + 20) {
+                    isPlayerPlanetTouched = true;
+                } else {
+                    isPlayerPlanetTouched = false;
+                }
             }
             return true;
         }
