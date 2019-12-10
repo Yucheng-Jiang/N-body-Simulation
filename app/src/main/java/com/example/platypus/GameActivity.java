@@ -30,6 +30,7 @@ public class GameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
         gameRunningTime = 0;
+        isRunning = false;
         vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
         startButton = findViewById(R.id.startButton);
         GameView gameView = findViewById(R.id.gameView);
@@ -89,10 +90,19 @@ public class GameActivity extends AppCompatActivity {
         });
     }
 
+    protected void onPause() {
+        super.onPause();
+        timer.cancel();
+        timer.purge();
+        finish();
+        return;
+    }
+
     private void endGame() {
         Intent intent = new Intent(this, GameEndActivity.class);
         intent.putExtra("time", gameRunningTime);
         startActivity(intent);
         finish();
+        return;
     }
 }
