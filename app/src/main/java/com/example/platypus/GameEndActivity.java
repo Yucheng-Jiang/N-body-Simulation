@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.text.DecimalFormat;
+
 public class GameEndActivity extends AppCompatActivity {
 
     @Override
@@ -15,8 +17,9 @@ public class GameEndActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_end);
         float a = getIntent().getFloatExtra("time", 0f);
+        DecimalFormat decimalFormat = new DecimalFormat("0.00");
         TextView textView = findViewById(R.id.textView);
-        textView.setText("You survived " + a + " seconds");
+        textView.setText("You survived " + decimalFormat.format(a) + " seconds");
         Button backButton = findViewById(R.id.backButton);
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
