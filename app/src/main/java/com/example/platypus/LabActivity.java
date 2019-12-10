@@ -65,18 +65,21 @@ public class LabActivity extends AppCompatActivity {
         CustomView customView = findViewById(R.id.customView);
 
         Planet.planetList.clear();
-        /*
+
         new Planet(600, new Vector(-200,200), new Vector(-20, -20));
         new Planet(600, new Vector(200,200), new Vector(-20, 20));
         new Planet(600, new Vector(200,-200), new Vector(20, 20));
         new Planet(600, new Vector(-200,-200), new Vector(20, -20));
 
-         */
+
+        /*
         Random random = new Random();
         for (int i = 0; i < 100; i++) {
             new Planet(random.nextInt(1000), new Vector(random.nextInt(1000), random.nextInt(1000)), new Vector(random.nextInt(5), random.nextInt(5)));
         }
         //
+
+         */
 
         delete.setOnClickListener(unused -> {
             boolean currentStop = false;
