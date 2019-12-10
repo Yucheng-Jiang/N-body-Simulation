@@ -29,14 +29,6 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <Button
-            android:id="@+id/Edit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Edit"
-            android:visibility="visible" />
-
-        <Button
             android:id="@+id/startButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -60,19 +52,6 @@
             android:layout_weight="1"
             android:text="Mass" />
 
-        <TextView
-            android:id="@+id/SpeedText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Velocity" />
-
-        <TextView
-            android:id="@+id/PositionText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Position" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

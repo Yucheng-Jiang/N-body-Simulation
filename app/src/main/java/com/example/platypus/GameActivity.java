@@ -2,6 +2,7 @@ package com.example.platypus;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
@@ -21,14 +22,16 @@ public class GameActivity extends AppCompatActivity {
     private static final double UPDATE_TIME_INTERVAL = 0.004;
     private float gameRunningTime;
     public static  final float PLAYER_MOVE_RANGE = 900;
+    private Button startButton;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         // project starts here
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+        gameRunningTime = 0;
         vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-        Button startButton = findViewById(R.id.startButton);
+        startButton = findViewById(R.id.startButton);
         GameView gameView = findViewById(R.id.gameView);
         TextView timeText = findViewById(R.id.timeText);
 
@@ -62,8 +65,7 @@ public class GameActivity extends AppCompatActivity {
                                     runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            Toast.makeText(getApplicationContext(), "GameOver", Toast.LENGTH_SHORT).show();
-                                            startButton.performClick();
+                                            endGame();
                                         }
                                     });
                                     break;
@@ -85,5 +87,12 @@ public class GameActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void endGame() {
+        Intent intent = new Intent(this, GameEndActivity.class);
+        intent.putExtra("time", gameRunningTime);
+        startActivity(intent);
+        finish();
     }
 }

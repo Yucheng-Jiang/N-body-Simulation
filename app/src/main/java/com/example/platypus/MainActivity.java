@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         Button tutorial = findViewById(R.id.Tutorial);
-        MediaPlayer mediaPlayer= MediaPlayer.create(MainActivity.this,R.raw.intro);
+        MediaPlayer mediaPlayer= MediaPlayer.create(MainActivity.this, R.raw.intro);
         tutorial.setOnClickListener(unused-> {
             if (mediaPlayer.isPlaying()) {
                 mediaPlayer.pause();
@@ -65,7 +65,6 @@ public class MainActivity extends AppCompatActivity {
 
             AlertDialog alertDialog = dialogBuilder.create();
             alertDialog.show();
-
              */
         });
     }
