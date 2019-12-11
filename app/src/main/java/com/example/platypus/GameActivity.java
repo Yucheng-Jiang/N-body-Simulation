@@ -23,6 +23,9 @@ public class GameActivity extends AppCompatActivity {
     private float gameRunningTime;
     public static final float PLAYER_MOVE_RANGE = 900;
     private Button startButton;
+    private static double cycle = 7400;
+    private GameView gameView;
+    private int count = 0;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -33,7 +36,7 @@ public class GameActivity extends AppCompatActivity {
         isRunning = false;
         vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
         startButton = findViewById(R.id.startButton);
-        GameView gameView = findViewById(R.id.gameView);
+        gameView = findViewById(R.id.gameView);
         TextView timeText = findViewById(R.id.timeText);
 
         Planet.planetList.clear();
@@ -56,7 +59,12 @@ public class GameActivity extends AppCompatActivity {
                     timer.schedule(new TimerTask() {
                         @Override
                         public void run() {
+                            centerPlayer();
                             gameRunningTime += 0.001;
+                            count++;
+                            if (count % cycle == 0) {
+                                resetPlanet();
+                            }
                             for (Planet p : Planet.planetList) {
                                 p.calcToMove(UPDATE_TIME_INTERVAL);
                             }
@@ -95,7 +103,6 @@ public class GameActivity extends AppCompatActivity {
         timer.cancel();
         timer.purge();
         finish();
-        return;
     }
 
     private void endGame() {
@@ -104,5 +111,21 @@ public class GameActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
         return;
+    }
+
+    private void resetPlanet() {
+        Planet temp = playerPlanet;
+        Planet.planetList.clear();
+        new Planet(600, new Vector(-200, 200), new Vector(-20, -20));
+        new Planet(600, new Vector(200, 200), new Vector(-20, 20));
+        new Planet(600, new Vector(200, -200), new Vector(20, 20));
+        new Planet(600, new Vector(-200, -200), new Vector(20, -20));
+        Planet.planetList.add(temp);
+    }
+
+    private void centerPlayer() {
+        float x = gameView.getWidth() / 2 - (float) playerPlanet.getPosition().getX();
+        float y = gameView.getHeight() / 2 - (float) playerPlanet.getPosition().getY();
+        gameView.setmPosXY(x, y);
     }
 }
