@@ -26,6 +26,8 @@ public class CustomView extends View {
     private float mFocusX;
     private float mFocusY;
     private Planet touchedPlanet;
+    private boolean isVelocityArrowTouched;
+    private boolean isPlanetTouched;
 
     public CustomView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -136,26 +138,37 @@ public class CustomView extends View {
     private class SimpleGestureListenerImpl extends GestureDetector.SimpleOnGestureListener {
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            if (e2.getPointerCount() == 2) {
+            if (isVelocityArrowTouched && !GameActivity.isRunning) {
+                touchedPlanet.setSpeed(
+                        touchedPlanet.getSpeed().getMinus(new Vector(distanceX, distanceY))
+                );
+            } else if (isPlanetTouched == true && !GameActivity.isRunning) {
+                touchedPlanet.setPosition(
+                        touchedPlanet.getPosition().getMinus(new Vector(distanceX, distanceY))
+                );
+                invalidate();
+            } else if (e2.getPointerCount() == 2) {
                 mPosX -= distanceX;
                 mPosY -= distanceY;
-                invalidate();
-            }
-            if (e2.getPointerCount() == 1 && touchedPlanet != null && LabActivity.isRunning == false) {
-                touchedPlanet.setPosition(touchedPlanet.getPosition().getMinus(new Vector(distanceX, distanceY)));
                 invalidate();
             }
             return true;
         }
         @Override
         public boolean onDown(MotionEvent e) {
+            isVelocityArrowTouched = false;
+            isPlanetTouched = false;
             Vector v = new Vector(e.getX() / mScaleFactor - mPosX, e.getY() / mScaleFactor - mPosY);
             for (Planet p : Planet.planetList) {
-                if (v.distance(p.getPosition()) < Math.sqrt(p.getMass()) + 20) {
+                if (v.distance(p.getPosition().getAdd(p.getSpeed())) < 40) {
+                    isVelocityArrowTouched = true;
+                    touchedPlanet = p;
+                } else if (v.distance(p.getPosition()) < Math.sqrt(p.getMass()) + 20) {
+                    isPlanetTouched = true;
                     touchedPlanet = p;
                     break;
                 } else {
-                    touchedPlanet = null;
+                    //touchedPlanet = null;
                 }
             }
             return true;

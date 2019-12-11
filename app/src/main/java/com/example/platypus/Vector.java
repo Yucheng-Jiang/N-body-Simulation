@@ -32,6 +32,9 @@ public class Vector {
         x = x + xx;
         y = y + yy;
     }
+    public Vector getAdd(Vector v) {
+        return new Vector(x + v.getX(), y + v.getY());
+    }
     public void minus(final Vector v) {
         x = x - v.getX();
         y = y - v.getY();

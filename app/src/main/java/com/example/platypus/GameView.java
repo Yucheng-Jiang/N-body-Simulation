@@ -160,10 +160,12 @@ public class GameView extends View {
             Vector v = new Vector(e.getX() / mScaleFactor - mPosX, e.getY() / mScaleFactor - mPosY);
             Vector position = new Vector(p.getPosition());
             position.add(p.getSpeed());
-            if (v.distance(position) < 50) {
+            if (v.distance(position) < 40) {
                 isVelocityArrowTouched = true;
+                isPlayerPlanetTouched = false;
             } else {
                 isVelocityArrowTouched = false;
+                isPlayerPlanetTouched = false;
                 if (v.distance(p.getPosition()) < Math.sqrt(p.getMass()) + 20) {
                     isPlayerPlanetTouched = true;
                 } else {
