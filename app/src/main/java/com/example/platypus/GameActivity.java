@@ -21,7 +21,7 @@ public class GameActivity extends AppCompatActivity {
     public static Planet playerPlanet;
     private static final double UPDATE_TIME_INTERVAL = 0.004;
     private float gameRunningTime;
-    public static  final float PLAYER_MOVE_RANGE = 900;
+    public static final float PLAYER_MOVE_RANGE = 900;
     private Button startButton;
 
     @Override
