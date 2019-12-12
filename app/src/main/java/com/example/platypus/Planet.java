@@ -14,7 +14,7 @@ import java.util.TimerTask;
 
 public class Planet {
     public static List<Planet> planetList = new ArrayList<>();
-    private static final double GRAVATATIONAL = 6.67 * Math.pow(10, 2);
+    private static final double GRAVATATIONAL = 6.67 * Math.pow(10, 3);
     private double mass;
     private Vector position;
     private Vector speed;
@@ -24,7 +24,7 @@ public class Planet {
     private Vector speedToAdd;
     public boolean isPlayer;
     private Vector extraSpeed = new Vector();
-    private static final float EXTRA_SPEED_MODULUS = 30;
+    private static final float EXTRA_SPEED_MODULUS = 40;
 
     Planet(final double setMass, final Vector setPosition, final Vector setSpeed) {
         this.mass = setMass;
@@ -118,7 +118,7 @@ public class Planet {
     }
 
     public void setExtraSpeed(float x, float y) {
-        if (isPlayer == false) {
+        if (!isPlayer) {
             return;
         }
         extraSpeed = new Vector(position.getX() - x, position.getY() - y);

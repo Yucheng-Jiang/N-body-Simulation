@@ -9,6 +9,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -36,11 +37,6 @@ public class CustomView extends View {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 
-    @Override
-    protected void onLayout(boolean changed, int l, int t, int r, int b) {
-
-    }
-
     public CustomView(Context context) {
         super(context);
     }
@@ -50,10 +46,11 @@ public class CustomView extends View {
         super.onDraw(canvas);
         canvas.scale(mScaleFactor, mScaleFactor, mFocusX, mFocusY);
         canvas.translate(mPosX, mPosY);
+        Paint paint = new Paint();
         for (int i = 0; i < Planet.planetList.size(); i++) {
             Planet p = Planet.planetList.get(i);
-            Paint paint = new Paint();
             paint.setColor(p.getColor());
+            paint.setStyle(Paint.Style.FILL);
             canvas.drawCircle(
                     (float) p.getPosition().getX(),
                     (float) p.getPosition().getY(),
@@ -117,6 +114,14 @@ public class CustomView extends View {
         }
     }
 
+    private Vector getOriginalCoordinate(Vector v) {
+        v.minus(new Vector(mFocusX, mFocusY));
+        v.multiply( 1 / mScaleFactor);
+        v.add(new Vector(mFocusX, mFocusY));
+        v.minus(new Vector(mPosX, mPosY));
+        return v;
+    }
+
     private class SimpleScaleListenerImpl extends ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
@@ -134,12 +139,16 @@ public class CustomView extends View {
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
             if (isVelocityArrowTouched && !GameActivity.isRunning) {
+                Vector v = new Vector(distanceX, distanceY);
+                v.multiply(1 / mScaleFactor);
                 touchedPlanet.setSpeed(
-                        touchedPlanet.getSpeed().getMinus(new Vector(distanceX, distanceY))
+                        touchedPlanet.getSpeed().getMinus(v)
                 );
-            } else if (isPlanetTouched == true && !GameActivity.isRunning) {
+            } else if (isPlanetTouched && !GameActivity.isRunning) {
+                Vector v = new Vector(distanceX, distanceY);
+                v.multiply(1 / mScaleFactor);
                 touchedPlanet.setPosition(
-                        touchedPlanet.getPosition().getMinus(new Vector(distanceX, distanceY))
+                        touchedPlanet.getPosition().getMinus(v)
                 );
                 invalidate();
             } else if (e2.getPointerCount() == 2) {
@@ -153,17 +162,18 @@ public class CustomView extends View {
         public boolean onDown(MotionEvent e) {
             isVelocityArrowTouched = false;
             isPlanetTouched = false;
-            Vector v = new Vector(e.getX() / mScaleFactor - mPosX, e.getY() / mScaleFactor - mPosY);
+            Vector v = new Vector(e.getX(), e.getY());
+            v = getOriginalCoordinate(v);
             for (Planet p : Planet.planetList) {
-                if (v.distance(p.getPosition().getAdd(p.getSpeed())) < 40) {
+                Vector position = new Vector(p.getPosition());
+                position.add(p.getSpeed());
+                if (v.distance(position) < 40) {
                     isVelocityArrowTouched = true;
                     touchedPlanet = p;
                 } else if (v.distance(p.getPosition()) < Math.sqrt(p.getMass()) + 20) {
                     isPlanetTouched = true;
                     touchedPlanet = p;
                     break;
-                } else {
-                    //touchedPlanet = null;
                 }
             }
             return true;

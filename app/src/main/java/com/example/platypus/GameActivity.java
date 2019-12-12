@@ -8,8 +8,8 @@ import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -19,31 +19,36 @@ public class GameActivity extends AppCompatActivity {
     public static boolean isRunning = false;
     private Vibrator vibrator;
     public static Planet playerPlanet;
-    private static final double UPDATE_TIME_INTERVAL = 0.004;
+    private static final double UPDATE_TIME_INTERVAL = 0.002;
     private float gameRunningTime;
-    public static final float PLAYER_MOVE_RANGE = 900;
+    public static final float PLAYER_MOVE_RANGE = 1000;
     private Button startButton;
-    private static double cycle = 7300;
+    private static double cycle = 13850;
     private GameView gameView;
     private int count = 0;
+    public static int leftCount = 200;
+    public ProgressBar progressBar;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         // project starts here
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+        timer = new Timer();
         gameRunningTime = 0;
         isRunning = false;
         vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
         startButton = findViewById(R.id.startButton);
         gameView = findViewById(R.id.gameView);
         TextView timeText = findViewById(R.id.timeText);
+        TextView countText = findViewById(R.id.countText);
+        progressBar = findViewById(R.id.progressBar);
 
         Planet.planetList.clear();
-        new Planet(600, new Vector(-200, 200), new Vector(-20, -20));
-        new Planet(600, new Vector(200, 200), new Vector(-20, 20));
-        new Planet(600, new Vector(200, -200), new Vector(20, 20));
-        new Planet(600, new Vector(-200, -200), new Vector(20, -20));
+        new Planet(500, new Vector(-400, 400), new Vector(-40, -40));
+        new Planet(500, new Vector(400, 400), new Vector(-40, 40));
+        new Planet(500, new Vector(400, -400), new Vector(40, 40));
+        new Planet(500, new Vector(-400, -400), new Vector(40, -40));
         //
         playerPlanet = new Planet(150, new Vector(0, 0), new Vector(20, -20), true);
 
@@ -84,6 +89,8 @@ public class GameActivity extends AppCompatActivity {
                                 @Override
                                 public void run() {
                                     timeText.setText("Time: " + gameRunningTime);
+                                    countText.setText("Left: " + leftCount);
+                                    progressBar.setProgress(leftCount);
                                 }
                             });
                         }
@@ -118,14 +125,14 @@ public class GameActivity extends AppCompatActivity {
             System.out.println(p.getPosition().getX() + "position" + p.getPosition().getY());
             System.out.println(p.getSpeed().getX() + "speed" + p.getSpeed().getY());
         }
-        Planet.planetList.get(0).setPosition(new Vector(-200, 200));
-        Planet.planetList.get(0).setSpeed(new Vector(-20, -20));
-        Planet.planetList.get(1).setPosition(new Vector(200, 200));
-        Planet.planetList.get(1).setSpeed(new Vector(-20, 20));
-        Planet.planetList.get(2).setPosition(new Vector(200, -200));
-        Planet.planetList.get(2).setSpeed(new Vector(20, 20));
-        Planet.planetList.get(3).setPosition(new Vector(-200, -200));
-        Planet.planetList.get(3).setSpeed(new Vector(20, -20));
+        Planet.planetList.get(0).setPosition(new Vector(-400, 400));
+        Planet.planetList.get(0).setSpeed(new Vector(-40, -40));
+        Planet.planetList.get(1).setPosition(new Vector(400, 400));
+        Planet.planetList.get(1).setSpeed(new Vector(-40, 40));
+        Planet.planetList.get(2).setPosition(new Vector(400, -400));
+        Planet.planetList.get(2).setSpeed(new Vector(40, 40));
+        Planet.planetList.get(3).setPosition(new Vector(-400, -400));
+        Planet.planetList.get(3).setSpeed(new Vector(40, -40));
     }
 
     private void centerPlayer() {
