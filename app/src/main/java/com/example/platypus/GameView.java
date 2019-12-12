@@ -170,8 +170,9 @@ public class GameView extends View {
         @Override
         public boolean onDown(MotionEvent e) {
             Planet p = GameActivity.playerPlanet;
-            if (GameActivity.isRunning) {
+            if (GameActivity.isRunning && GameActivity.leftCount > 0) {
                 p.setExtraSpeed((e.getX() - mPosX) / mScaleFactor, (e.getY() - mPosY) / mScaleFactor);
+                GameActivity.leftCount--;
             }
             Vector vv = new Vector(e.getX(), e.getY());
             Vector v = getOriginalCoordinate(vv);

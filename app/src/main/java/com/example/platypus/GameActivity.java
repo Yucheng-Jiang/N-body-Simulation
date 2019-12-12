@@ -8,8 +8,8 @@ import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -26,6 +26,8 @@ public class GameActivity extends AppCompatActivity {
     private static double cycle = 13850;
     private GameView gameView;
     private int count = 0;
+    public static int leftCount = 200;
+    public ProgressBar progressBar;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -39,6 +41,8 @@ public class GameActivity extends AppCompatActivity {
         startButton = findViewById(R.id.startButton);
         gameView = findViewById(R.id.gameView);
         TextView timeText = findViewById(R.id.timeText);
+        TextView countText = findViewById(R.id.countText);
+        progressBar = findViewById(R.id.progressBar);
 
         Planet.planetList.clear();
         new Planet(500, new Vector(-400, 400), new Vector(-40, -40));
@@ -85,6 +89,8 @@ public class GameActivity extends AppCompatActivity {
                                 @Override
                                 public void run() {
                                     timeText.setText("Time: " + gameRunningTime);
+                                    countText.setText("Left: " + leftCount);
+                                    progressBar.setProgress(leftCount);
                                 }
                             });
                         }
