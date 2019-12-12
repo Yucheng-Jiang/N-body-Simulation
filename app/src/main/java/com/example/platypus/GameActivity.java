@@ -23,7 +23,7 @@ public class GameActivity extends AppCompatActivity {
     private float gameRunningTime;
     public static final float PLAYER_MOVE_RANGE = 900;
     private Button startButton;
-    private static double cycle = 7400;
+    private static double cycle = 7300;
     private GameView gameView;
     private int count = 0;
 
@@ -114,13 +114,18 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void resetPlanet() {
-        Planet temp = playerPlanet;
-        Planet.planetList.clear();
-        new Planet(600, new Vector(-200, 200), new Vector(-20, -20));
-        new Planet(600, new Vector(200, 200), new Vector(-20, 20));
-        new Planet(600, new Vector(200, -200), new Vector(20, 20));
-        new Planet(600, new Vector(-200, -200), new Vector(20, -20));
-        Planet.planetList.add(temp);
+        for (Planet p : Planet.planetList) {
+            System.out.println(p.getPosition().getX() + "position" + p.getPosition().getY());
+            System.out.println(p.getSpeed().getX() + "speed" + p.getSpeed().getY());
+        }
+        Planet.planetList.get(0).setPosition(new Vector(-200, 200));
+        Planet.planetList.get(0).setSpeed(new Vector(-20, -20));
+        Planet.planetList.get(1).setPosition(new Vector(200, 200));
+        Planet.planetList.get(1).setSpeed(new Vector(-20, 20));
+        Planet.planetList.get(2).setPosition(new Vector(200, -200));
+        Planet.planetList.get(2).setSpeed(new Vector(20, 20));
+        Planet.planetList.get(3).setPosition(new Vector(-200, -200));
+        Planet.planetList.get(3).setSpeed(new Vector(20, -20));
     }
 
     private void centerPlayer() {

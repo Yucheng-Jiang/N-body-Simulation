@@ -16,7 +16,6 @@ import androidx.annotation.Nullable;
 
 public class GameView extends View {
     private float mScaleFactor = 1.0f;
-    private ScaleGestureDetector mScaleDetector = new ScaleGestureDetector(getContext(), new SimpleScaleListenerImpl());
     private GestureDetector mGestureDetector = new GestureDetector(getContext(), new SimpleGestureListenerImpl());
     private float mPosX;
     private float mPosY;
@@ -51,18 +50,19 @@ public class GameView extends View {
         Paint paint = new Paint();
         for (int i = 0; i < Planet.planetList.size(); i++) {
             Planet p = Planet.planetList.get(i);
-            paint.setColor(p.getColor());
-            paint.setStyle(Paint.Style.FILL);
+            paint.setColor(Color.RED);
+            if (p.isPlayer) {
+                paint.setColor(Color.BLUE);
+            }
             canvas.drawCircle(
                     (float) p.getPosition().getX(),
                     (float) p.getPosition().getY(),
                     (float) Math.pow(p.getMass(), 0.5),
                     paint
             );
-            paint.setStyle(Paint.Style.STROKE);
-            canvas.drawPath(p.path, paint);
         }
         paint.setColor(Color.RED);
+        paint.setStyle(Paint.Style.STROKE);
         canvas.drawCircle(0, 0, GameActivity.PLAYER_MOVE_RANGE, paint);
         if (GameActivity.isRunning == false) {
             drawVelocity(canvas);
@@ -75,7 +75,6 @@ public class GameView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        mScaleDetector.onTouchEvent(event);
         mGestureDetector.onTouchEvent(event);
         return true;
     }
@@ -120,19 +119,6 @@ public class GameView extends View {
         canvas.drawPath(path, paint);
     }
 
-    private class SimpleScaleListenerImpl extends ScaleGestureDetector.SimpleOnScaleGestureListener {
-        @Override
-        public boolean onScale(ScaleGestureDetector detector) {
-            mScaleFactor *= detector.getScaleFactor();
-            //
-            mScaleFactor = Math.max(0.3f, Math.min(mScaleFactor, 3.0f));
-            mFocusX = detector.getFocusX();
-            mFocusY = detector.getFocusY();
-            invalidate();
-            return true;
-        }
-    }
-
     private class SimpleGestureListenerImpl extends GestureDetector.SimpleOnGestureListener {
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
@@ -145,7 +131,7 @@ public class GameView extends View {
                         GameActivity.playerPlanet.getPosition().getMinus(new Vector(distanceX, distanceY))
                 );
                 invalidate();
-            } else if (e2.getPointerCount() == 2) {
+            } else if (e2.getPointerCount() == 2 && GameActivity.isRunning == false) {
                 mPosX -= distanceX;
                 mPosY -= distanceY;
                 invalidate();
