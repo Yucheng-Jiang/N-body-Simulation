@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 
 public class GameView extends View {
     private float mScaleFactor = 1.0f;
+    private ScaleGestureDetector mScaleDetector = new ScaleGestureDetector(getContext(), new SimpleScaleListenerImpl());
     private GestureDetector mGestureDetector = new GestureDetector(getContext(), new SimpleGestureListenerImpl());
     private float mPosX;
     private float mPosY;
@@ -64,7 +65,7 @@ public class GameView extends View {
         paint.setColor(Color.RED);
         paint.setStyle(Paint.Style.STROKE);
         canvas.drawCircle(0, 0, GameActivity.PLAYER_MOVE_RANGE, paint);
-        if (GameActivity.isRunning == false) {
+        if (!GameActivity.isRunning) {
             drawVelocity(canvas);
             invalidate();
         }
@@ -75,6 +76,7 @@ public class GameView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        mScaleDetector.onTouchEvent(event);
         mGestureDetector.onTouchEvent(event);
         return true;
     }
@@ -89,7 +91,7 @@ public class GameView extends View {
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(4);
         Planet p = GameActivity.playerPlanet;
-        paint.setColor(p.getColor());
+        paint.setColor(Color.BLUE);
 
         float fromX = (float) p.getPosition().getX();
         float fromY = (float) p.getPosition().getY();
@@ -119,44 +121,70 @@ public class GameView extends View {
         canvas.drawPath(path, paint);
     }
 
+    private Vector getOriginalCoordinate(Vector v) {
+        v.minus(new Vector(mFocusX, mFocusY));
+        v.multiply( 1 / mScaleFactor);
+        v.add(new Vector(mFocusX, mFocusY));
+        v.minus(new Vector(mPosX, mPosY));
+        return v;
+    }
+
+    private class SimpleScaleListenerImpl extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
+            mScaleFactor *= detector.getScaleFactor();
+            //
+            mScaleFactor = Math.max(0.5f, Math.min(mScaleFactor, 2.0f));
+            mFocusX = detector.getFocusX();
+            mFocusY = detector.getFocusY();
+            invalidate();
+            return true;
+        }
+    }
+
     private class SimpleGestureListenerImpl extends GestureDetector.SimpleOnGestureListener {
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            if (isVelocityArrowTouched && GameActivity.isRunning == false) {
-                GameActivity.playerPlanet.setSpeed(
-                        GameActivity.playerPlanet.getSpeed().getMinus(new Vector(distanceX, distanceY))
-                );
-            } else if (isPlayerPlanetTouched == true && GameActivity.isRunning == false) {
-                GameActivity.playerPlanet.setPosition(
-                        GameActivity.playerPlanet.getPosition().getMinus(new Vector(distanceX, distanceY))
-                );
-                invalidate();
-            } else if (e2.getPointerCount() == 2 && GameActivity.isRunning == false) {
-                mPosX -= distanceX;
-                mPosY -= distanceY;
-                invalidate();
+            if (!GameActivity.isRunning) {
+                if (isVelocityArrowTouched) {
+                    Vector v = new Vector(distanceX, distanceY);
+                    v.multiply(1 / mScaleFactor);
+                    GameActivity.playerPlanet.setSpeed(
+                            GameActivity.playerPlanet.getSpeed().getMinus(v)
+                    );
+                } else if (isPlayerPlanetTouched) {
+                    Vector v = new Vector(distanceX, distanceY);
+                    v.multiply(1 / mScaleFactor);
+                    GameActivity.playerPlanet.setPosition(
+                            GameActivity.playerPlanet.getPosition().getMinus(v)
+                    );
+                    invalidate();
+                } else if (e2.getPointerCount() == 2) {
+                    mPosX -= distanceX;
+                    mPosY -= distanceY;
+                    invalidate();
+                }
             }
             return true;
         }
         @Override
         public boolean onDown(MotionEvent e) {
-            GameActivity.playerPlanet.setExtraSpeed(e.getX() / mScaleFactor - mPosX, e.getY() / mScaleFactor - mPosY);
-
             Planet p = GameActivity.playerPlanet;
-            Vector v = new Vector(e.getX() / mScaleFactor - mPosX, e.getY() / mScaleFactor - mPosY);
+            if (GameActivity.isRunning) {
+                p.setExtraSpeed((e.getX() - mPosX) / mScaleFactor, (e.getY() - mPosY) / mScaleFactor);
+            }
+            Vector vv = new Vector(e.getX(), e.getY());
+            Vector v = getOriginalCoordinate(vv);
+
+            //Vector v = new Vector((e.getX() / mScaleFactor) - mPosX, (e.getY() / mScaleFactor) - mPosY);
             Vector position = new Vector(p.getPosition());
             position.add(p.getSpeed());
+            isVelocityArrowTouched = false;
+            isPlayerPlanetTouched = false;
             if (v.distance(position) < 40) {
                 isVelocityArrowTouched = true;
-                isPlayerPlanetTouched = false;
-            } else {
-                isVelocityArrowTouched = false;
-                isPlayerPlanetTouched = false;
-                if (v.distance(p.getPosition()) < Math.sqrt(p.getMass()) + 20) {
-                    isPlayerPlanetTouched = true;
-                } else {
-                    isPlayerPlanetTouched = false;
-                }
+            } else if (v.distance(p.getPosition()) < Math.sqrt(p.getMass()) + 20) {
+                isPlayerPlanetTouched = true;
             }
             return true;
         }

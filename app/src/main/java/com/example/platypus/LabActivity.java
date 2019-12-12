@@ -62,10 +62,10 @@ public class LabActivity extends AppCompatActivity {
 
         Planet.planetList.clear();
 
-        new Planet(600, new Vector(-200,200), new Vector(-20, -20));
-        new Planet(600, new Vector(200, 200), new Vector(-20, 20));
-        new Planet(600, new Vector(200, -200), new Vector(20, 20));
-        new Planet(600, new Vector(-200,-200), new Vector(20, -20));
+        new Planet(600, new Vector(-400,400), new Vector(-40, -40));
+        new Planet(600, new Vector(400, 400), new Vector(-40, 40));
+        new Planet(600, new Vector(400, -400), new Vector(40, 40));
+        new Planet(600, new Vector(-400,-400), new Vector(40, -40));
 
         /*
         Random random = new Random();
@@ -107,6 +107,7 @@ public class LabActivity extends AppCompatActivity {
                 if (!isRunning) {
                     startButton.setImageResource(android.R.drawable.ic_media_pause);
                     isRunning = true;
+                    timer = new Timer();
                     timer.schedule(new TimerTask() {
                         @Override
                         public void run() {
@@ -184,7 +185,6 @@ public class LabActivity extends AppCompatActivity {
         if (isRunning) {
             findViewById(R.id.startButton).performClick();
         }
-        timer = null;
         finish();
     }
 
