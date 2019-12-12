@@ -43,6 +43,7 @@ public class GameActivity extends AppCompatActivity {
         TextView timeText = findViewById(R.id.timeText);
         TextView countText = findViewById(R.id.countText);
         progressBar = findViewById(R.id.progressBar);
+        leftCount = 200;
 
         Planet.planetList.clear();
         new Planet(500, new Vector(-400, 400), new Vector(-40, -40));
